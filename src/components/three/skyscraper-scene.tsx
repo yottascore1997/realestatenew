@@ -350,7 +350,7 @@ function SunSystem({ onSun }: SunSystemProps) {
   return (
     <>
       <Sky
-        ref={skyRef}
+        ref={skyRef as never}
         distance={450000}
         sunPosition={[60, 4, -90]}
         turbidity={9}

@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { SalesChart } from "@/components/crm/sales-chart";
 import { LeadSourcesChart } from "@/components/crm/lead-sources-chart";
-import { dashboardStats } from "@/lib/mock-data";
+import { dashboardStats, salesChartData, leadSourcesData } from "@/lib/mock-data";
 import { formatCurrency } from "@/lib/utils";
 
 export default function ReportsPage() {
@@ -26,8 +26,11 @@ export default function ReportsPage() {
         </Card>
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <SalesChart />
-        <LeadSourcesChart />
+        <SalesChart data={salesChartData} />
+        <LeadSourcesChart
+          data={leadSourcesData.map((s) => ({ ...s, count: s.value }))}
+          total={leadSourcesData.reduce((sum, s) => sum + s.value, 0)}
+        />
       </div>
     </div>
   );

@@ -7,11 +7,13 @@ export const mockAgents: AgentPerformance[] = [
 ];
 
 export const mockLeadDashboard: LeadDashboardStats = {
+  totalLeads: 2543,
   todaysLeads: 24,
   todaysFollowUps: 18,
   overdueFollowUps: 5,
   hotLeads: 32,
   siteVisitsToday: 7,
+  bookedTotal: 156,
   bookingsThisMonth: 15,
   lostLeads: 8,
   revenueGenerated: 45000000,

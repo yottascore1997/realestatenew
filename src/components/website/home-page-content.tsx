@@ -42,15 +42,14 @@ export function HomePageContent({ properties }: HomePageContentProps) {
 
   const source = properties.length >= 4 ? properties.slice(0, 4) : null;
   const displayProperties = (source ?? PLACEHOLDER_PROPERTIES).map((p) => {
-    const isApi = "bedrooms" in p;
     return {
       id: p.id,
       title: p.title,
       city: p.city,
       price: Number(p.price),
       image: p.image ?? undefined,
-      beds: isApi ? (p.bedrooms ?? 3) : p.beds,
-      baths: isApi ? (p.bathrooms ?? 2) : p.baths,
+      beds: "bedrooms" in p ? (p.bedrooms ?? 3) : ("beds" in p ? p.beds : 3),
+      baths: "bathrooms" in p ? (p.bathrooms ?? 2) : ("baths" in p ? p.baths : 2),
       sqft: p.sqft ?? 1800,
       rent: p.status === "FOR_RENT" || ("rent" in p && !!p.rent),
     };

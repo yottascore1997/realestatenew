@@ -23,7 +23,7 @@ export async function listEmployees() {
     const users = await prisma.user.findMany({
       where: { role: { in: ["AGENT", "MANAGER", "ADMIN"] } },
       select: selectFields,
-      orderBy: [{ isActive: "desc" }, { name: "asc" }],
+      orderBy: { name: "asc" },
     });
     return NextResponse.json(users);
   } catch {
