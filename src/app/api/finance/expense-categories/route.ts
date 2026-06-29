@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
+
 import { EXPENSE_CATEGORIES } from "@/lib/finance/constants";
+
+export const dynamic = "force-dynamic";
+
 
 export async function GET() {
   let categories = await prisma.expenseCategory.findMany({ orderBy: { name: "asc" } });

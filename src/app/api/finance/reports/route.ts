@@ -4,6 +4,7 @@ import { toNumber } from "@/lib/finance/constants";
 
 export const dynamic = "force-dynamic";
 
+
 export async function GET() {
   const [commissions, installments, outstanding, refunds, vendors, salaries, gst, customers] = await Promise.all([
     prisma.commission.findMany({ include: { agent: true, booking: { include: { customer: true, project: true } } }, orderBy: { createdAt: "desc" } }),

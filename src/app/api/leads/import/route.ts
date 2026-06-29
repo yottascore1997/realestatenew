@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
+
 import { normalizeMobile } from "@/lib/leads/import-utils";
+
+export const dynamic = "force-dynamic";
+
 
 const VALID_SOURCES = [
   "FACEBOOK_ADS", "INSTAGRAM_ADS", "GOOGLE_ADS", "WEBSITE", "WHATSAPP",
@@ -21,6 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   let imported = 0;
+
   let skipped = 0;
   const errors: string[] = [];
 
@@ -59,15 +65,19 @@ export async function POST(request: NextRequest) {
           status: "NEW",
           activities: {
             create: { type: "LEAD_CREATED", title: "Imported from Excel", description: "Bulk import" },
+
           },
         },
       });
       imported++;
+
     } catch {
       skipped++;
       errors.push(`Failed to import ${row.fullName}`);
+
     }
   }
 
   return NextResponse.json({ imported, skipped, errors });
+
 }

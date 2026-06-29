@@ -5,7 +5,7 @@ export default async function LaunchesPage() {
   const launches = await prisma.launch.findMany({
     orderBy: [{ featured: "desc" }, { launchDate: "asc" }],
     include: { project: true },
-  });
+  }).catch(() => []);
 
   return (
     <div className="py-12">

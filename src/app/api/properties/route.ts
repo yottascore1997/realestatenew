@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
 
 function slugify(title: string) {
   const base = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");

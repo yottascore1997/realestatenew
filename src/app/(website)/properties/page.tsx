@@ -6,7 +6,7 @@ export default async function PropertiesPage() {
   const properties = await prisma.property.findMany({
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
     include: { project: true },
-  });
+  }).catch(() => []);
 
   return (
     <div className="py-12">

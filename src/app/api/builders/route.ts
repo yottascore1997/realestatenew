@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
 
 function mapProject(p: {
   id: string; name: string; location: string; city: string; status: string;

@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
+
 import { LEAD_SOURCES } from "@/lib/leads/constants";
+
 import { KANBAN_COLUMNS } from "@/lib/leads/constants";
+
+export const dynamic = "force-dynamic";
+
 
 const SOURCE_COLORS = [
   "#7c3aed", "#6366f1", "#a78bfa", "#22c55e", "#f59e0b",

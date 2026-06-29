@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
+
 import { toNumber } from "@/lib/finance/constants";
+
+export const dynamic = "force-dynamic";
+
 
 export async function GET() {
   const today = new Date();

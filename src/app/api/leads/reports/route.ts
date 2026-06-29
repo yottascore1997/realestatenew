@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+
 export async function GET() {
   const agents = await prisma.user.findMany({
     where: { role: { in: ["AGENT", "MANAGER", "ADMIN"] } },

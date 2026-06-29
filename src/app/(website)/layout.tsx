@@ -1,6 +1,8 @@
 import { Navbar } from "@/components/website/navbar";
 import { Footer } from "@/components/website/footer";
 
+export const dynamic = "force-dynamic";
+
 export default function WebsiteLayout({
   children,
 }: {

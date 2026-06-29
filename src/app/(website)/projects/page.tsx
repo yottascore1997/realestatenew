@@ -5,7 +5,7 @@ export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
     include: { builder: true, _count: { select: { properties: true } } },
-  });
+  }).catch(() => []);
 
   return (
     <div className="py-12">

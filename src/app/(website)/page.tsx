@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { HomePageContent } from "@/components/website/home-page-content";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   let projects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
   let properties: Awaited<ReturnType<typeof prisma.property.findMany>> = [];
