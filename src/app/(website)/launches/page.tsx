@@ -1,11 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function LaunchesPage() {
-  const launches = await prisma.launch.findMany({
-    orderBy: [{ featured: "desc" }, { launchDate: "asc" }],
-    include: { project: true },
-  }).catch(() => []);
+  let launches: Awaited<ReturnType<typeof prisma.launch.findMany>> = [];
+
+  try {
+    launches = await prisma.launch.findMany({
+      orderBy: [{ featured: "desc" }, { launchDate: "asc" }],
+      include: { project: true },
+    });
+  } catch {
+    // DB unavailable or schema not migrated — render empty state
+  }
 
   return (
     <div className="py-12">

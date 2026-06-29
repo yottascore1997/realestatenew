@@ -2,11 +2,19 @@ import { Bed, Bath, Maximize } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function PropertiesPage() {
-  const properties = await prisma.property.findMany({
-    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-    include: { project: true },
-  }).catch(() => []);
+  let properties: Awaited<ReturnType<typeof prisma.property.findMany>> = [];
+
+  try {
+    properties = await prisma.property.findMany({
+      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+      include: { project: true },
+    });
+  } catch {
+    // DB unavailable or schema not migrated — render empty state
+  }
 
   return (
     <div className="py-12">

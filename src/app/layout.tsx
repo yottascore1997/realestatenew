@@ -19,6 +19,8 @@ const greatVibes = Great_Vibes({
   weight: "400",
 });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Triyards — Premium Real Estate Platform",
   description: "Buy, sell & invest in verified properties with zero brokerage. Home loans, legal support & end-to-end guidance.",

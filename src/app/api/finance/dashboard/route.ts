@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 
 export async function GET() {
+  try {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
@@ -139,4 +140,28 @@ export async function GET() {
       date: e.expenseDate,
     })),
   });
+  } catch (err) {
+    console.error("Finance dashboard API error:", err);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return NextResponse.json({
+      totalSales: 0,
+      totalRevenueReceived: 0,
+      pendingCollection: 0,
+      todaysCollection: 0,
+      monthlyCollection: 0,
+      totalExpenses: 0,
+      netProfit: 0,
+      netLoss: 0,
+      outstandingAmount: 0,
+      commissionPayable: 0,
+      gstCollected: 0,
+      gstPaid: 0,
+      gstPending: 0,
+      monthlyRevenue: months.map((m) => ({ month: m, revenue: 0, expenses: 0 })),
+      projectWise: [],
+      cashFlow: { received: 0, spent: 0, balance: 0 },
+      recentPayments: [],
+      recentExpenses: [],
+    });
+  }
 }

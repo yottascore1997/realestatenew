@@ -8,13 +8,18 @@ export const dynamic = "force-dynamic";
 
 
 export async function GET() {
-  let categories = await prisma.expenseCategory.findMany({ orderBy: { name: "asc" } });
-  if (categories.length === 0) {
-    await prisma.expenseCategory.createMany({
-      data: EXPENSE_CATEGORIES.map((name) => ({ name })),
-      skipDuplicates: true,
-    });
-    categories = await prisma.expenseCategory.findMany({ orderBy: { name: "asc" } });
+  try {
+    let categories = await prisma.expenseCategory.findMany({ orderBy: { name: "asc" } });
+    if (categories.length === 0) {
+      await prisma.expenseCategory.createMany({
+        data: EXPENSE_CATEGORIES.map((name) => ({ name })),
+        skipDuplicates: true,
+      });
+      categories = await prisma.expenseCategory.findMany({ orderBy: { name: "asc" } });
+    }
+    return NextResponse.json(categories);
+  } catch (err) {
+    console.error("Expense categories API error:", err);
+    return NextResponse.json(EXPENSE_CATEGORIES.map((name) => ({ id: name, name })));
   }
-  return NextResponse.json(categories);
 }
