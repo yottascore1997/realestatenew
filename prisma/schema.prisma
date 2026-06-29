@@ -1,0 +1,854 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  AGENT
+  MANAGER
+}
+
+enum LeadPipelineStatus {
+  NEW
+  ASSIGNED
+  CONTACTED
+  INTERESTED
+  FOLLOW_UP
+  SITE_VISIT_SCHEDULED
+  SITE_VISIT_DONE
+  NEGOTIATION
+  BOOKED
+  LOST
+}
+
+enum LeadSource {
+  FACEBOOK_ADS
+  INSTAGRAM_ADS
+  GOOGLE_ADS
+  WEBSITE
+  WHATSAPP
+  WALK_IN
+  REFERRAL
+  MAGICBRICKS
+  NINETY_NINE_ACRES
+  HOUSING
+  BROKER
+  CALL
+  OTHER
+}
+
+enum LeadPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum LeadTemperature {
+  HOT
+  WARM
+  COLD
+}
+
+enum PropertyRequirement {
+  PLOT
+  FLAT
+  VILLA
+  COMMERCIAL
+}
+
+enum PurchasePurpose {
+  INVESTMENT
+  SELF_USE
+}
+
+enum FollowUpType {
+  CALL
+  EMAIL
+  WHATSAPP
+  MEETING
+  SITE_VISIT
+}
+
+enum SiteVisitStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum ActivityType {
+  LEAD_CREATED
+  ASSIGNED
+  CALL
+  STATUS_CHANGE
+  FOLLOW_UP
+  SITE_VISIT
+  NEGOTIATION
+  BOOKED
+  LOST
+  NOTE
+  DOCUMENT
+  WHATSAPP
+  PAYMENT
+}
+
+enum DocumentType {
+  PAN
+  AADHAR
+  CHEQUE
+  BOOKING_FORM
+  PDF
+  IMAGE
+  OTHER
+}
+
+enum NotificationType {
+  FOLLOW_UP_REMINDER
+  NEW_LEAD_ASSIGNED
+  SITE_VISIT_REMINDER
+  BOOKING_REMINDER
+  OVERDUE_FOLLOW_UP
+}
+
+enum DealStage {
+  NEW_LEAD
+  CONTACT_MADE
+  PROPERTY_SHOWING
+  PROPOSAL_SENT
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum PropertyStatus {
+  FOR_SALE
+  FOR_RENT
+  SOLD
+  RENTED
+  OFF_MARKET
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  HOUSE
+  COMMERCIAL
+  LAND
+  PENTHOUSE
+}
+
+enum ProjectStatus {
+  PLANNING
+  UNDER_CONSTRUCTION
+  READY_TO_MOVE
+  COMPLETED
+}
+
+enum LaunchStatus {
+  UPCOMING
+  LIVE
+  SOLD_OUT
+  CLOSED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AppointmentType {
+  PROPERTY_SHOWING
+  CLIENT_MEETING
+  FOLLOW_UP_CALL
+  DOCUMENT_SIGNING
+  OTHER
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  password     String
+  role         UserRole  @default(AGENT)
+  avatar       String?
+  phone        String?
+  department   String?
+  designation  String?
+  employeeCode String?   @unique
+  joiningDate  DateTime?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  leads            Lead[]         @relation("AssignedAgent")
+  properties       Property[]
+  deals            Deal[]
+  tasks            Task[]
+  appointments     Appointment[]
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  followUps        FollowUp[]
+  callNotes        CallNote[]
+  siteVisits       SiteVisit[]    @relation("VisitExecutive")
+  activities       LeadActivity[]
+  notifications    Notification[]
+  bookings         Booking[]      @relation("BookingAgent")
+  paymentsReceived Payment[]      @relation("PaymentReceiver")
+  commissions      Commission[]
+  expensesApproved Expense[]      @relation("ExpenseApprover")
+  refundsApproved  Refund[]       @relation("RefundApprover")
+  salaries         Salary[]
+}
+
+model Builder {
+  id        String   @id @default(cuid())
+  name      String
+  company   String?
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  gstNumber String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects Project[]
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String        @db.Text
+  location    String
+  city        String
+  developer   String?
+  builderId   String?
+  status      ProjectStatus @default(UNDER_CONSTRUCTION)
+  image       String?
+  images      Json?
+  amenities   Json?
+  totalUnits  Int?
+  priceFrom   Decimal?      @db.Decimal(15, 2)
+  priceTo     Decimal?      @db.Decimal(15, 2)
+  featured    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  builder    Builder?   @relation(fields: [builderId], references: [id], onDelete: SetNull)
+  properties Property[]
+  launches   Launch[]
+  leads      Lead[]
+  siteVisits SiteVisit[]
+  bookings   Booking[]
+  expenses   Expense[]
+}
+
+model Launch {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String       @db.Text
+  location    String
+  city        String
+  status      LaunchStatus @default(UPCOMING)
+  launchDate  DateTime?
+  image       String?
+  images      Json?
+  priceFrom   Decimal?     @db.Decimal(15, 2)
+  priceTo     Decimal?     @db.Decimal(15, 2)
+  featured    Boolean      @default(false)
+  projectId   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+}
+
+model Property {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  description String         @db.Text
+  address     String
+  city        String
+  state       String?
+  zipCode     String?
+  price       Decimal        @db.Decimal(15, 2)
+  type        PropertyType   @default(APARTMENT)
+  status      PropertyStatus @default(FOR_SALE)
+  bedrooms    Int            @default(0)
+  bathrooms   Int            @default(0)
+  sqft        Int?
+  image       String?
+  images      Json?
+  amenities   Json?
+  featured    Boolean        @default(false)
+  projectId   String?
+  agentId     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  agent    User?     @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  deals    Deal[]
+  bookings Booking[]
+}
+
+model Lead {
+  id                String              @id @default(cuid())
+  fullName          String
+  mobile            String
+  alternateMobile   String?
+  email             String?
+  whatsapp          String?
+  city              String?
+  occupation        String?
+  propertyType      PropertyRequirement?
+  projectId         String?
+  preferredLocation String?
+  budget            String?
+  budgetMin         Decimal?            @db.Decimal(15, 2)
+  budgetMax         Decimal?            @db.Decimal(15, 2)
+  bhk               String?
+  loanRequired      Boolean             @default(false)
+  purchasePurpose   PurchasePurpose?
+  source            LeadSource          @default(WEBSITE)
+  status            LeadPipelineStatus  @default(NEW)
+  priority          LeadPriority        @default(MEDIUM)
+  temperature       LeadTemperature     @default(WARM)
+  aiScore           Float?
+  tags              Json?
+  notes             String?             @db.Text
+  avatar            String?
+  lostReason        String?
+  bookingAmount     Decimal?            @db.Decimal(15, 2)
+  paymentStatus     String?
+  nextFollowUpDate  DateTime?
+  nextFollowUpTime  String?
+  reminderMinutes   Int?                @default(30)
+  agentId           String?
+  contactId         String?             @unique
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  agent        User?          @relation("AssignedAgent", fields: [agentId], references: [id], onDelete: SetNull)
+  project      Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  contact      Contact?       @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  deals        Deal[]
+  tasks        Task[]
+  appointments Appointment[]
+  followUps    FollowUp[]
+  callNotes    CallNote[]
+  siteVisits   SiteVisit[]
+  activities   LeadActivity[]
+  documents    LeadDocument[]
+  bookings     Booking[]
+
+  @@index([mobile])
+  @@index([email])
+  @@index([status])
+  @@index([agentId])
+  @@index([source])
+  @@index([nextFollowUpDate])
+}
+
+model FollowUp {
+  id              String       @id @default(cuid())
+  leadId          String
+  scheduledDate   DateTime
+  scheduledTime   String?
+  type            FollowUpType @default(CALL)
+  notes           String?      @db.Text
+  reminderMinutes Int          @default(30)
+  completed       Boolean      @default(false)
+  completedAt     DateTime?
+  agentId         String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  lead  Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  agent User? @relation(fields: [agentId], references: [id], onDelete: SetNull)
+}
+
+model LeadActivity {
+  id          String       @id @default(cuid())
+  leadId      String
+  type        ActivityType
+  title       String
+  description String?      @db.Text
+  metadata    Json?
+  userId      String?
+  createdAt   DateTime     @default(now())
+
+  lead Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model CallNote {
+  id        String   @id @default(cuid())
+  leadId    String
+  content   String   @db.Text
+  duration  Int?
+  outcome   String?
+  agentId   String?
+  createdAt DateTime @default(now())
+
+  lead  Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  agent User? @relation(fields: [agentId], references: [id], onDelete: SetNull)
+}
+
+model SiteVisit {
+  id         String          @id @default(cuid())
+  leadId     String
+  projectId  String?
+  visitDate  DateTime
+  visitTime  String?
+  status     SiteVisitStatus @default(SCHEDULED)
+  feedback   String?         @db.Text
+  executiveId String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  executive User?    @relation("VisitExecutive", fields: [executiveId], references: [id], onDelete: SetNull)
+}
+
+model LeadDocument {
+  id         String       @id @default(cuid())
+  leadId     String
+  name       String
+  type       DocumentType @default(OTHER)
+  url        String
+  uploadedAt DateTime     @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String           @db.Text
+  read      Boolean          @default(false)
+  leadId    String?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  address   String?
+  notes     String?  @db.Text
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lead Lead?
+}
+
+model Deal {
+  id         String    @id @default(cuid())
+  title      String
+  value      Decimal   @db.Decimal(15, 2)
+  stage      DealStage @default(NEW_LEAD)
+  leadId     String?
+  propertyId String?
+  agentId    String?
+  notes      String?   @db.Text
+  closedAt   DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  lead     Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  agent    User?     @relation(fields: [agentId], references: [id], onDelete: SetNull)
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String
+  description String?      @db.Text
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  leadId      String?
+  assigneeId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  lead     Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  assignee User? @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+}
+
+model Appointment {
+  id        String          @id @default(cuid())
+  title     String
+  type      AppointmentType @default(PROPERTY_SHOWING)
+  location  String?
+  startTime DateTime
+  endTime   DateTime?
+  notes     String?         @db.Text
+  leadId    String?
+  agentId   String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  lead  Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  agent User? @relation(fields: [agentId], references: [id], onDelete: SetNull)
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  subject    String?
+  content    String   @db.Text
+  read       Boolean  @default(false)
+  senderId   String
+  receiverId String
+  createdAt  DateTime @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model MarketingCampaign {
+  id          String    @id @default(cuid())
+  name        String
+  type        String
+  status      String    @default("draft")
+  budget      Decimal?  @db.Decimal(15, 2)
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ─── Finance & Revenue Management ───────────────────────────────────────────
+
+enum BookingStatus {
+  PENDING
+  PARTIAL_PAID
+  FULLY_PAID
+  CANCELLED
+}
+
+enum PaymentMode {
+  UPI
+  BANK_TRANSFER
+  CHEQUE
+  CASH
+  NEFT
+  RTGS
+  CARD
+}
+
+enum InstallmentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  PARTIAL
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CommissionStatus {
+  PENDING
+  PAID
+  PARTIAL
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSED
+}
+
+enum GstType {
+  COLLECTED
+  PAID
+  PENDING
+}
+
+enum LedgerEntryType {
+  DEBIT
+  CREDIT
+}
+
+enum CompanyEntryType {
+  INCOME
+  EXPENSE
+  OPENING
+  CLOSING
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String
+  alternatePhone String?
+  address   String?  @db.Text
+  city      String?
+  pan       String?
+  aadhar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings      Booking[]
+  payments      Payment[]
+  refunds       Refund[]
+  ledgerEntries CustomerLedgerEntry[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+model Booking {
+  id                  String        @id @default(cuid())
+  bookingNumber       String        @unique
+  customerId          String
+  projectId           String?
+  propertyId          String?
+  leadId              String?
+  agentId             String?
+  salePrice           Decimal       @db.Decimal(15, 2)
+  bookingAmount       Decimal       @db.Decimal(15, 2)
+  agreementAmount     Decimal?      @db.Decimal(15, 2)
+  registrationAmount  Decimal?      @db.Decimal(15, 2)
+  discount            Decimal?      @db.Decimal(15, 2) @default(0)
+  gstAmount           Decimal?      @db.Decimal(15, 2) @default(0)
+  totalAmount         Decimal       @db.Decimal(15, 2)
+  remainingBalance    Decimal       @db.Decimal(15, 2)
+  status              BookingStatus @default(PENDING)
+  bookingDate         DateTime      @default(now())
+  notes               String?       @db.Text
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  customer         Customer          @relation(fields: [customerId], references: [id])
+  project          Project?          @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  property         Property?         @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  lead             Lead?             @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  agent            User?             @relation("BookingAgent", fields: [agentId], references: [id], onDelete: SetNull)
+  paymentSchedules PaymentSchedule[]
+  payments         Payment[]
+  commissions      Commission[]
+  refunds          Refund[]
+  gstTransactions  GstTransaction[]
+  ledgerEntries    CustomerLedgerEntry[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([bookingDate])
+}
+
+model PaymentSchedule {
+  id          String            @id @default(cuid())
+  bookingId   String
+  label       String
+  percentage  Decimal?          @db.Decimal(5, 2)
+  amount      Decimal           @db.Decimal(15, 2)
+  dueDate     DateTime
+  paidDate    DateTime?
+  paidAmount  Decimal?          @db.Decimal(15, 2) @default(0)
+  lateFee     Decimal?          @db.Decimal(15, 2) @default(0)
+  status      InstallmentStatus @default(PENDING)
+  sortOrder   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id            String      @id @default(cuid())
+  receiptNo     String      @unique
+  bookingId     String
+  customerId    String
+  amount        Decimal     @db.Decimal(15, 2)
+  paymentDate   DateTime    @default(now())
+  mode          PaymentMode @default(UPI)
+  transactionId String?
+  referenceNo   String?
+  receivedById  String?
+  notes         String?     @db.Text
+  createdAt     DateTime    @default(now())
+
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  customer   Customer @relation(fields: [customerId], references: [id])
+  receivedBy User?    @relation("PaymentReceiver", fields: [receivedById], references: [id], onDelete: SetNull)
+}
+
+model ExpenseCategory {
+  id       String  @id @default(cuid())
+  name     String  @unique
+  parent   String?
+  expenses Expense[]
+}
+
+model Vendor {
+  id        String   @id @default(cuid())
+  name      String
+  category  String?
+  phone     String?
+  email     String?
+  gstin     String?
+  address   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  expenses      Expense[]
+  ledgerEntries VendorLedgerEntry[]
+}
+
+model Expense {
+  id            String        @id @default(cuid())
+  expenseNumber String        @unique
+  categoryId    String
+  projectId     String?
+  vendorId      String?
+  amount        Decimal       @db.Decimal(15, 2)
+  gstAmount     Decimal?      @db.Decimal(15, 2) @default(0)
+  totalAmount   Decimal       @db.Decimal(15, 2)
+  expenseDate   DateTime      @default(now())
+  description   String?       @db.Text
+  billUrl       String?
+  status        ExpenseStatus @default(PENDING)
+  approvedById  String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  category   ExpenseCategory @relation(fields: [categoryId], references: [id])
+  project    Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  vendor     Vendor?         @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  approvedBy User?           @relation("ExpenseApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  gstTransactions GstTransaction[]
+}
+
+model Commission {
+  id                String           @id @default(cuid())
+  agentId           String
+  bookingId         String
+  commissionPercent Decimal          @db.Decimal(5, 2)
+  commissionAmount  Decimal          @db.Decimal(15, 2)
+  paidAmount        Decimal?         @db.Decimal(15, 2) @default(0)
+  status            CommissionStatus @default(PENDING)
+  paymentDate       DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  agent   User    @relation(fields: [agentId], references: [id])
+  booking Booking @relation(fields: [bookingId], references: [id])
+}
+
+model Refund {
+  id           String       @id @default(cuid())
+  refundNumber String       @unique
+  customerId   String
+  bookingId    String?
+  reason       String       @db.Text
+  amount       Decimal      @db.Decimal(15, 2)
+  status       RefundStatus @default(PENDING)
+  approvedById String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  booking    Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  approvedBy User?    @relation("RefundApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+}
+
+model GstTransaction {
+  id          String   @id @default(cuid())
+  type        GstType
+  amount      Decimal  @db.Decimal(15, 2)
+  bookingId   String?
+  expenseId   String?
+  description String?
+  txnDate     DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  booking Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  expense Expense? @relation(fields: [expenseId], references: [id], onDelete: SetNull)
+}
+
+model CustomerLedgerEntry {
+  id          String          @id @default(cuid())
+  customerId  String
+  bookingId   String?
+  type        LedgerEntryType
+  description String
+  amount      Decimal         @db.Decimal(15, 2)
+  balance     Decimal         @db.Decimal(15, 2)
+  entryDate   DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  booking  Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+}
+
+model VendorLedgerEntry {
+  id          String          @id @default(cuid())
+  vendorId    String
+  type        LedgerEntryType
+  description String
+  amount      Decimal         @db.Decimal(15, 2)
+  balance     Decimal         @db.Decimal(15, 2)
+  entryDate   DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+}
+
+model CompanyLedgerEntry {
+  id          String           @id @default(cuid())
+  type        CompanyEntryType
+  category    String
+  description String
+  amount      Decimal          @db.Decimal(15, 2)
+  balance     Decimal          @db.Decimal(15, 2)
+  entryDate   DateTime         @default(now())
+  referenceId String?
+  createdAt   DateTime         @default(now())
+}
+
+model Salary {
+  id          String   @id @default(cuid())
+  employeeId  String
+  month       String
+  baseSalary  Decimal  @db.Decimal(15, 2)
+  commission  Decimal? @db.Decimal(15, 2) @default(0)
+  bonus       Decimal? @db.Decimal(15, 2) @default(0)
+  deduction   Decimal? @db.Decimal(15, 2) @default(0)
+  finalSalary Decimal  @db.Decimal(15, 2)
+  status      String   @default("PENDING")
+  paidDate    DateTime?
+  createdAt   DateTime @default(now())
+
+  employee User @relation(fields: [employeeId], references: [id])
+}

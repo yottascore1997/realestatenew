@@ -1,0 +1,225 @@
+export const dashboardStats = {
+  totalLeads: 2543,
+  activeDeals: 156,
+  totalProperties: 1234,
+  closedDeals: 89,
+  totalRevenue: 2400000,
+  trends: {
+    leads: 12.5,
+    deals: 8.3,
+    properties: 15.7,
+    closed: 18.2,
+    revenue: 20.4,
+  },
+};
+
+export const salesChartData = [
+  { date: "May 1", thisMonth: 18000, lastMonth: 15000 },
+  { date: "May 5", thisMonth: 22000, lastMonth: 17000 },
+  { date: "May 9", thisMonth: 19500, lastMonth: 16000 },
+  { date: "May 13", thisMonth: 24000, lastMonth: 18500 },
+  { date: "May 16", thisMonth: 24580, lastMonth: 19000 },
+  { date: "May 20", thisMonth: 28000, lastMonth: 21000 },
+  { date: "May 24", thisMonth: 26000, lastMonth: 20000 },
+  { date: "May 28", thisMonth: 32000, lastMonth: 24000 },
+];
+
+export const leadSourcesData = [
+  { name: "Website", value: 35, color: "#4F6BF5" },
+  { name: "Referral", value: 25, color: "#22C55E" },
+  { name: "Social Media", value: 20, color: "#F59E0B" },
+  { name: "Property Portal", value: 15, color: "#8B5CF6" },
+  { name: "Others", value: 5, color: "#94A3B8" },
+];
+
+export const upcomingActivities = [
+  {
+    id: "1",
+    title: "Property Showing",
+    subtitle: "123 Oak Street, Downtown",
+    time: "10:00 AM",
+    type: "PROPERTY_SHOWING" as const,
+  },
+  {
+    id: "2",
+    title: "Client Meeting",
+    subtitle: "Michael Chen",
+    time: "2:30 PM",
+    type: "CLIENT_MEETING" as const,
+  },
+  {
+    id: "3",
+    title: "Follow-up Call",
+    subtitle: "Emily Rodriguez",
+    time: "4:00 PM",
+    type: "FOLLOW_UP_CALL" as const,
+  },
+  {
+    id: "4",
+    title: "Document Signing",
+    subtitle: "456 Pine Avenue",
+    time: "5:30 PM",
+    type: "DOCUMENT_SIGNING" as const,
+  },
+];
+
+export const recentLeads = [
+  {
+    id: "1",
+    name: "Michael Chen",
+    email: "michael.chen@email.com",
+    status: "HOT",
+    budget: "$450,000 - $550,000",
+    avatar: "https://i.pravatar.cc/150?u=michael",
+  },
+  {
+    id: "2",
+    name: "Emily Rodriguez",
+    email: "emily.r@email.com",
+    status: "NEW",
+    budget: "$300,000 - $400,000",
+    avatar: "https://i.pravatar.cc/150?u=emily",
+  },
+  {
+    id: "3",
+    name: "David Thompson",
+    email: "david.t@email.com",
+    status: "WARM",
+    budget: "$600,000 - $750,000",
+    avatar: "https://i.pravatar.cc/150?u=david",
+  },
+  {
+    id: "4",
+    name: "Sarah Williams",
+    email: "sarah.w@email.com",
+    status: "HOT",
+    budget: "$800,000 - $1,000,000",
+    avatar: "https://i.pravatar.cc/150?u=sarahw",
+  },
+];
+
+export const dealPipeline = [
+  { stage: "NEW_LEAD", count: 45, value: 1250000, percent: 100 },
+  { stage: "CONTACT_MADE", count: 32, value: 980000, percent: 71 },
+  { stage: "PROPERTY_SHOWING", count: 24, value: 720000, percent: 53 },
+  { stage: "PROPOSAL_SENT", count: 18, value: 540000, percent: 40 },
+  { stage: "NEGOTIATION", count: 12, value: 380000, percent: 27 },
+  { stage: "CLOSED_WON", count: 8, value: 240000, percent: 18 },
+];
+
+export const recentProperties = [
+  {
+    id: "1",
+    title: "Modern Family Home",
+    address: "123 Oak Street, Downtown",
+    bedrooms: 4,
+    bathrooms: 3,
+    sqft: 2400,
+    price: 485000,
+    status: "FOR_SALE",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop",
+  },
+  {
+    id: "2",
+    title: "Luxury Penthouse",
+    address: "456 Pine Avenue, Uptown",
+    bedrooms: 3,
+    bathrooms: 2,
+    sqft: 1800,
+    price: 725000,
+    status: "FOR_SALE",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop",
+  },
+  {
+    id: "3",
+    title: "Cozy Suburban House",
+    address: "789 Maple Drive, Suburbs",
+    bedrooms: 3,
+    bathrooms: 2,
+    sqft: 1650,
+    price: 395000,
+    status: "FOR_SALE",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop",
+  },
+];
+
+export const websiteProjects = [
+  {
+    id: "1",
+    name: "Skyline Residences",
+    slug: "skyline-residences",
+    location: "Bandra West, Mumbai",
+    city: "Mumbai",
+    status: "UNDER_CONSTRUCTION",
+    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop",
+    priceFrom: 8500000,
+    priceTo: 25000000,
+    totalUnits: 120,
+    developer: "EstatePro Developers",
+  },
+  {
+    id: "2",
+    name: "Green Valley Villas",
+    slug: "green-valley-villas",
+    location: "Whitefield, Bangalore",
+    city: "Bangalore",
+    status: "READY_TO_MOVE",
+    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&h=400&fit=crop",
+    priceFrom: 12000000,
+    priceTo: 35000000,
+    totalUnits: 45,
+    developer: "EstatePro Developers",
+  },
+  {
+    id: "3",
+    name: "Marina Bay Towers",
+    slug: "marina-bay-towers",
+    location: "Marine Drive, Mumbai",
+    city: "Mumbai",
+    status: "PLANNING",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop",
+    priceFrom: 15000000,
+    priceTo: 50000000,
+    totalUnits: 200,
+    developer: "EstatePro Developers",
+  },
+];
+
+export const websiteLaunches = [
+  {
+    id: "1",
+    name: "Pre-Launch: Ocean View",
+    slug: "ocean-view-prelaunch",
+    location: "Juhu, Mumbai",
+    city: "Mumbai",
+    status: "UPCOMING",
+    launchDate: "2026-07-15",
+    image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop",
+    priceFrom: 9500000,
+    priceTo: 18000000,
+  },
+  {
+    id: "2",
+    name: "Phase 2: Emerald Heights",
+    slug: "emerald-heights-phase2",
+    location: "Gurgaon Sector 62",
+    city: "Gurgaon",
+    status: "LIVE",
+    launchDate: "2026-06-01",
+    image: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600&h=400&fit=crop",
+    priceFrom: 7500000,
+    priceTo: 14000000,
+  },
+  {
+    id: "3",
+    name: "Exclusive: Royal Gardens",
+    slug: "royal-gardens",
+    location: "Pune Hinjewadi",
+    city: "Pune",
+    status: "UPCOMING",
+    launchDate: "2026-08-20",
+    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&h=400&fit=crop",
+    priceFrom: 5500000,
+    priceTo: 12000000,
+  },
+];
