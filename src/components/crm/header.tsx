@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, Plus, Bell, ChevronDown, LogOut, Settings } from "lucide-react";
+import { Search, Plus, Bell, ChevronDown, LogOut, Settings, Menu } from "lucide-react";
 
 interface AuthUser {
   userId: string;
@@ -15,6 +15,7 @@ interface AuthUser {
 
 interface HeaderProps {
   title?: string;
+  onMenuClick?: () => void;
 }
 
 const ROLE_LABEL: Record<string, string> = {
@@ -23,7 +24,7 @@ const ROLE_LABEL: Record<string, string> = {
   AGENT: "Agent",
 };
 
-export function Header({ title }: HeaderProps) {
+export function Header({ title, onMenuClick }: HeaderProps) {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -53,9 +54,17 @@ export function Header({ title }: HeaderProps) {
   const avatar = user?.avatar || `https://i.pravatar.cc/150?u=${user?.email ?? "user"}`;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/80 px-6 backdrop-blur-xl">
-      <div className="flex items-center gap-4">
-        {title && <h1 className="text-lg font-bold text-slate-900">{title}</h1>}
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-2 border-b border-slate-200/80 bg-white/80 px-4 backdrop-blur-xl sm:h-16 sm:px-6">
+      <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4">
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={onMenuClick}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-600 lg:hidden"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        {title && <h1 className="truncate text-base font-bold text-slate-900 sm:text-lg">{title}</h1>}
         <div className="relative hidden md:block">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
@@ -66,10 +75,10 @@ export function Header({ title }: HeaderProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
         <Link href="/crm/leads/new">
-          <button className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-3.5 text-sm font-semibold text-white shadow-md shadow-violet-200 transition-all hover:brightness-110">
-            <Plus className="h-4 w-4" /> New
+          <button className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-2.5 text-sm font-semibold text-white shadow-md shadow-violet-200 transition-all hover:brightness-110 sm:px-3.5">
+            <Plus className="h-4 w-4" /> <span className="hidden sm:inline">New</span>
           </button>
         </Link>
         <button className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-colors hover:bg-violet-50 hover:text-violet-600">

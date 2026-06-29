@@ -132,7 +132,7 @@ export default function FinanceDashboardPage() {
           <div className="bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all" style={{ width: `${receivedPct}%` }} />
           <div className="bg-gradient-to-r from-rose-400 to-rose-500 flex-1" />
         </div>
-        <div className="grid grid-cols-3 gap-3 text-center sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3 sm:gap-4">
           <div className="rounded-xl bg-emerald-50 px-3 py-3">
             <div className="mb-1 flex items-center justify-center gap-1 text-xs font-medium text-emerald-700">
               <ArrowDownLeft className="h-3.5 w-3.5" /> Received
