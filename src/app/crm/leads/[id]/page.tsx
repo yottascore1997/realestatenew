@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
-  ArrowLeft, Phone, MessageCircle, Calendar, FileText, MapPin, Upload, Send, Clock, User, Loader2,
+  ArrowLeft, Phone, MessageCircle, Calendar, FileText, MapPin, Send, Clock, User, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -69,7 +69,7 @@ export default function LeadDetailPage() {
           <img src={(lead.avatar as string) ?? `https://i.pravatar.cc/150?u=${lead.mobile}`} alt="" className="h-14 w-14 rounded-full object-cover ring-2 ring-slate-100" />
           <div>
             <h2 className="text-2xl font-bold text-slate-900">{lead.fullName as string}</h2>
-            <p className="text-sm text-slate-500">{lead.mobile as string} {lead.email && `· ${lead.email}`}</p>
+            <p className="text-sm text-slate-500">{lead.mobile as string}{lead.email ? ` · ${String(lead.email)}` : ""}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", statusCfg.bgLight, statusCfg.textColor)}>{statusCfg.label}</span>
               <span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", priority.color)}>{priority.icon} {priority.label}</span>

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Layers, Menu, X, Phone, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { WEBSITE_NAV, WEBSITE_NAV_MORE, BRAND_NAME, BRAND_PHONE } from "@/lib/website/constants";
-import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const pathname = usePathname();

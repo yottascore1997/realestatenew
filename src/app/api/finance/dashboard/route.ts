@@ -16,7 +16,7 @@ export async function GET() {
     todayPayments,
     monthPayments,
     allExpenses,
-    monthExpenses,
+    ,
     pendingCommissions,
     gstCollected,
     gstPaid,

@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import type { LeadActivity } from "@/lib/leads/types";
 import { format } from "date-fns";
 import {
@@ -31,7 +30,7 @@ export function LeadTimeline({ activities }: { activities: LeadActivity[] }) {
   return (
     <div className="relative space-y-0">
       <div className="absolute left-5 top-2 bottom-2 w-0.5 bg-slate-200" />
-      {activities.map((activity, i) => {
+      {activities.map((activity) => {
         const Icon = iconMap[activity.type] ?? ArrowRight;
         return (
           <div key={activity.id} className="relative flex gap-4 pb-6">

@@ -1,8 +1,8 @@
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { SalesChart } from "@/components/crm/sales-chart";
 import { LeadSourcesChart } from "@/components/crm/lead-sources-chart";
 import { dashboardStats } from "@/lib/mock-data";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 
 export default function ReportsPage() {
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,10 +9,8 @@ import { Select } from "@/components/ui/select";
 import { FormSection, FormGrid } from "@/components/ui/form-section";
 import { formatINR, PAYMENT_MODES } from "@/lib/finance/constants";
 import { format } from "date-fns";
-import { useRouter } from "next/navigation";
 
 export default function PaymentsPage() {
-  const router = useRouter();
   const [payments, setPayments] = useState<Record<string, unknown>[]>([]);
   const [bookings, setBookings] = useState<Record<string, unknown>[]>([]);
   const [showForm, setShowForm] = useState(false);

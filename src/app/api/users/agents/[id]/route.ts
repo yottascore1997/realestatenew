@@ -1,10 +1,11 @@
 import { NextRequest } from "next/server";
-import { PATCH as employeePatch, DELETE as employeeDelete } from "../../employees/[id]/route";
+import { updateEmployee, deleteEmployee } from "@/lib/users/employees-api";
 
-export async function PATCH(request: NextRequest, ctx: { params: { id: string } }) {
-  return employeePatch(request, ctx);
+/** Backward-compatible — delegates to employees handlers */
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  return updateEmployee(request, params.id);
 }
 
-export async function DELETE(request: NextRequest, ctx: { params: { id: string } }) {
-  return employeeDelete(request, ctx);
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+  return deleteEmployee(params.id);
 }

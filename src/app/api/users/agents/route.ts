@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { listEmployees, createEmployee } from "@/lib/users/employees-api";
 
 /** Backward-compatible — delegates to employees handlers */
-import { GET as employeesGet, POST as employeesPost } from "../employees/route";
-
 export async function GET() {
-  return employeesGet();
+  return listEmployees();
 }
 
 export async function POST(request: NextRequest) {
-  return employeesPost(request);
+  return createEmployee(request);
 }

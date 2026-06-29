@@ -2,13 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormSection, FormGrid } from "@/components/ui/form-section";
-import { PAYMENT_MODES } from "@/lib/finance/constants";
 import { useRouter } from "next/navigation";
 
 export default function NewBookingPage() {

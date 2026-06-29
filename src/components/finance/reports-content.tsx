@@ -7,7 +7,7 @@ import { format } from "date-fns";
 
 type ReportData = Record<string, unknown>;
 
-export default function FinanceReportsPage({ type }: { type?: string }) {
+export default function FinanceReportsPage() {
   const [data, setData] = useState<ReportData | null>(null);
 
   useEffect(() => {
@@ -17,12 +17,8 @@ export default function FinanceReportsPage({ type }: { type?: string }) {
   if (!data) return <div className="py-12 text-center text-slate-500">Loading...</div>;
 
   const commissions = data.commissions as Record<string, unknown>[];
-  const installments = data.installments as Record<string, unknown>[];
-  const outstanding = data.outstanding as Record<string, unknown>[];
-  const refunds = data.refunds as Record<string, unknown>[];
   const projectWisePL = data.projectWisePL as { projectName: string; revenue: number; expense: number; profit: number }[];
   const companyLedger = data.companyLedger as Record<string, unknown>[];
-  const gst = data.gst as Record<string, unknown>[];
 
   return (
     <div className="space-y-8">
