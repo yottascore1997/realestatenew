@@ -1,10 +1,13 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+type LaunchWithProject = Prisma.LaunchGetPayload<{ include: { project: true } }>;
+
 export default async function LaunchesPage() {
-  let launches: Awaited<ReturnType<typeof prisma.launch.findMany>> = [];
+  let launches: LaunchWithProject[] = [];
 
   try {
     launches = await prisma.launch.findMany({

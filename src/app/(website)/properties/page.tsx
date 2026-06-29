@@ -1,11 +1,14 @@
+import { Prisma } from "@prisma/client";
 import { Bed, Bath, Maximize } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+type PropertyWithProject = Prisma.PropertyGetPayload<{ include: { project: true } }>;
+
 export default async function PropertiesPage() {
-  let properties: Awaited<ReturnType<typeof prisma.property.findMany>> = [];
+  let properties: PropertyWithProject[] = [];
 
   try {
     properties = await prisma.property.findMany({

@@ -1,10 +1,15 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+type ProjectWithBuilder = Prisma.ProjectGetPayload<{
+  include: { builder: true; _count: { select: { properties: true } } };
+}>;
+
 export default async function ProjectsPage() {
-  let projects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
+  let projects: ProjectWithBuilder[] = [];
 
   try {
     projects = await prisma.project.findMany({
