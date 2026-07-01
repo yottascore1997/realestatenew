@@ -22,8 +22,8 @@ export default async function PropertiesPage() {
   return (
     <div className="py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-900">Properties For Sale</h1>
-        <p className="mt-2 text-slate-500">{properties.length} verified properties — zero brokerage</p>
+        <h1 className="text-3xl text-slate-900">Properties For Sale</h1>
+        <p className="website-body-text mt-2 text-slate-500">{properties.length} verified properties — zero brokerage</p>
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {properties.map((property) => (
             <div key={property.id} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-shadow hover:shadow-xl">

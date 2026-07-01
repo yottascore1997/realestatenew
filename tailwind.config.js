@@ -32,6 +32,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        heading: ["var(--font-poppins)", "var(--font-inter)", "system-ui", "sans-serif"],
         serif: ["var(--font-playfair)", "Georgia", "serif"],
         script: ["var(--font-script)", "cursive"],
         geist: ["Geist", "var(--font-inter)", "system-ui", "sans-serif"],

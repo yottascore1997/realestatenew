@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Not Acceptable</title>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+    <base href="https://custom-page.qa-apptrana.com/" target="_blank">
+    <link rel="stylesheet" type="text/css" href="ifc/400/styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1>406 - Not Acceptable</h1>
+        <p>Request was blocked due to suspicious behavior.</p>
+
+        <div class="details">
+            <h2>Request Details</h2>
+            <table>
+                <tr>
+                    <td><strong>Time</strong></td>
+                    <td>Tuesday, 30-Jun-2026 08:08:59 GMT</td>
+                </tr>
+                <tr>
+                    <td><strong>IP</strong></td>
+                    <td>59.95.118.252</td>
+                </tr>
+                <tr>
+                    <td><strong>ID</strong></td>
+                    <td>2ca647c3053b6d549fb70eafe9efef4d</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

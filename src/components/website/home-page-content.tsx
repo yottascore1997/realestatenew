@@ -1,238 +1,351 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import {
-  Heart, Bed, Bath, Maximize, ArrowRight, ChevronLeft, ChevronRight,
-  LayoutGrid, ShieldCheck, Leaf, Headphones, Users, Building2, Award, Quote, Star,
+  Heart, ArrowRight, ChevronLeft, ChevronRight, MapPin, Star, Quote,
+  ShieldCheck, Building2, BadgeCheck, Landmark, Scale, HardHat, Users, Sparkles,
 } from "lucide-react";
 import { HeroSection } from "@/components/website/hero-section";
-import { TRUST_STATS, TESTIMONIALS, BRAND_NAME } from "@/lib/website/constants";
+import {
+  TESTIMONIALS, TOP_BUILDERS, WHY_CHOOSE,
+  PLATFORM_STATS, PLACEHOLDER_LAUNCHES,
+} from "@/lib/website/constants";
 import { formatINR, cn } from "@/lib/utils";
+import { BrandWordmark } from "@/components/website/brand-wordmark";
+import { ExploreCitiesSection } from "@/components/website/explore-cities-section";
+import { FeaturedLaunchesSection } from "@/components/website/featured-launches-section";
+import { HotSellingProjectsSection } from "@/components/website/hot-selling-projects-section";
 
-const FEATURES = [
-  { icon: LayoutGrid, bg: "bg-violet-100 text-violet-600", title: "Modern Design", desc: "Exclusive modern architecture for your lifestyle." },
-  { icon: ShieldCheck, bg: "bg-rose-100 text-rose-600", title: "Trusted & Safe", desc: "Secure and trusted properties only." },
-  { icon: Leaf, bg: "bg-emerald-100 text-emerald-600", title: "Eco Friendly", desc: "Sustainable living for a better future." },
-  { icon: Headphones, bg: "bg-sky-100 text-sky-600", title: "24/7 Support", desc: "We are always here to help you." },
-];
+const WHY_ICONS = { ShieldCheck, Building2, MapPin, Landmark, BadgeCheck, Scale };
+const STAT_ICONS = { Building2, HardHat, MapPin, Users };
 
-const STAT_ICONS = [Users, Building2, Award, Users];
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+};
 
-const PLACEHOLDER_PROPERTIES = [
-  { id: "1", title: "Modern Villa", city: "Pune, MH", price: 24500000, status: "FOR_SALE", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop", beds: 4, baths: 3, sqft: 3200 },
-  { id: "2", title: "Luxury Apartment", city: "Mumbai, MH", price: 18500000, status: "FOR_SALE", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop", beds: 3, baths: 2, sqft: 1800 },
-  { id: "3", title: "Premium Penthouse", city: "Bangalore, KA", price: 65000, status: "FOR_RENT", image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop", beds: 3, baths: 2, sqft: 2100, rent: true },
-  { id: "4", title: "Garden Villa", city: "Hyderabad, TS", price: 32000000, status: "FOR_SALE", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&h=400&fit=crop", beds: 5, baths: 4, sqft: 4500 },
-];
-
-interface PropertyItem {
-  id: string; title: string; address: string; city: string; image?: string | null;
-  price: number; bedrooms?: number | null; bathrooms?: number | null; sqft?: number | null; status: string;
+function SectionHeader({
+  eyebrow,
+  title,
+  href,
+  linkText,
+  theme = "orange",
+  linkTheme,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  href?: string;
+  linkText?: string;
+  theme?: "orange" | "purple";
+  linkTheme?: "orange" | "purple" | "green";
+}) {
+  const isOrange = theme === "orange";
+  const linkStyle = linkTheme ?? theme;
+  return (
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 sm:mb-8 sm:gap-4">
+      <div>
+        <p className={isOrange ? "eyebrow-orange" : "eyebrow-purple"}>
+          <Sparkles className="h-3.5 w-3.5" /> {eyebrow}
+        </p>
+        <h2 className="website-section-title mt-2">{title}</h2>
+      </div>
+      {href && linkText && (
+        <Link
+          href={href}
+          className={cn(
+            "group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all hover:shadow-sm",
+            linkStyle === "green" && "border border-emerald-600/20 bg-emerald-600 text-white hover:bg-emerald-700",
+            linkStyle === "orange" && "border border-orange-200/80 bg-orange-50/50 text-orange-800 hover:bg-orange-100",
+            linkStyle === "purple" && "border border-violet-200/80 bg-violet-50/50 text-violet-800 hover:bg-violet-100"
+          )}
+        >
+          {linkText} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      )}
+    </div>
+  );
 }
+
+interface LaunchItem {
+  id: string; name: string; location: string; city: string;
+  image?: string | null; priceFrom?: number | null; status?: string;
+}
+
 interface HomePageContentProps {
   projects: unknown[];
-  properties: PropertyItem[];
-  launches: unknown[];
+  properties: unknown[];
+  launches: LaunchItem[];
 }
 
-export function HomePageContent({ properties }: HomePageContentProps) {
-  const [testimonialIdx, setTestimonialIdx] = useState(0);
-  const [email, setEmail] = useState("");
+export function HomePageContent({ launches }: HomePageContentProps) {
+  const [builderIdx, setBuilderIdx] = useState(0);
+  const [testimonialStart, setTestimonialStart] = useState(0);
 
-  const source = properties.length >= 4 ? properties.slice(0, 4) : null;
-  const displayProperties = (source ?? PLACEHOLDER_PROPERTIES).map((p) => {
-    return {
-      id: p.id,
-      title: p.title,
-      city: p.city,
-      price: Number(p.price),
-      image: p.image ?? undefined,
-      beds: "bedrooms" in p ? (p.bedrooms ?? 3) : ("beds" in p ? p.beds : 3),
-      baths: "bathrooms" in p ? (p.bathrooms ?? 2) : ("baths" in p ? p.baths : 2),
-      sqft: p.sqft ?? 1800,
-      rent: p.status === "FOR_RENT" || ("rent" in p && !!p.rent),
-    };
+  const displayLaunches = Array.from({ length: 4 }, (_, i) => {
+    const l = launches[i];
+    const ph = PLACEHOLDER_LAUNCHES[i];
+    if (l) {
+      return {
+        id: l.id,
+        name: l.name,
+        location: l.location || ph.location,
+        city: l.city,
+        priceFrom: l.priceFrom ?? ph.priceFrom,
+        bhk: ph.bhk,
+        possession: ph.possession,
+        image: l.image ?? ph.image,
+      };
+    }
+    return { ...ph };
   });
 
-  const t = TESTIMONIALS[testimonialIdx];
+  const paddedBuilders = (() => {
+    const visible = TOP_BUILDERS.slice(builderIdx, builderIdx + 5);
+    return visible.length < 5 ? [...visible, ...TOP_BUILDERS.slice(0, 5 - visible.length)] : visible;
+  })();
+
+  const visibleTestimonials = [0, 1, 2].map((o) => TESTIMONIALS[(testimonialStart + o) % TESTIMONIALS.length]);
 
   return (
     <div className="bg-white">
       <HeroSection />
 
-      {/* Features */}
-      <section className="py-12 sm:py-14">
+      {/* Newly Launched Projects — original card grid */}
+      <section className="section-orange pb-4 pt-6 sm:pb-8 sm:pt-10 lg:pb-10 lg:pt-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map(({ icon: Icon, bg, title, desc }) => (
-              <div key={title} className="text-center sm:text-left">
-                <span className={cn("inline-flex h-12 w-12 items-center justify-center rounded-xl", bg)}>
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-4 text-base font-bold text-navy">{title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}>
+            <SectionHeader
+              theme="orange"
+              linkTheme="green"
+              eyebrow="Exclusive Launches"
+              title={
+                <>
+                  Newly <span className="website-section-title-accent">Launched</span> Projects
+                </>
+              }
+              href="/launches"
+              linkText="View All Projects"
+            />
+          </motion.div>
 
-      {/* Popular Residences */}
-      <section className="bg-slate-50/80 py-12 sm:py-14">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-gold">Properties</p>
-              <h2 className="mt-1 font-serif text-2xl font-semibold text-navy sm:text-3xl">Our Popular Residences</h2>
-            </div>
-            <Link href="/properties" className="flex items-center gap-1 text-sm font-semibold text-gold-dark hover:text-gold">
-              View All Properties <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {displayProperties.map((p) => (
-              <Link key={p.id} href="/properties" className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 transition-shadow hover:shadow-lg">
-                <div className="relative h-48 overflow-hidden">
-                  <img src={p.image || ""} alt={p.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <span className={cn(
-                    "absolute left-3 top-3 rounded-lg px-2.5 py-1 text-[10px] font-bold text-white",
-                    p.rent ? "bg-emerald-500" : "bg-gold-gradient shadow-gold"
-                  )}>
-                    {p.rent ? "For Rent" : "For Sale"}
-                  </span>
-                  <button className="absolute right-3 top-3 rounded-full bg-white/90 p-2 shadow" onClick={(e) => e.preventDefault()}>
-                    <Heart className="h-4 w-4 text-slate-400" />
-                  </button>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-navy">{p.title}</h3>
-                  <p className="text-sm text-slate-500">{p.city}</p>
-                  <p className="mt-2 text-lg font-bold text-gold-dark">
-                    {p.rent ? `${formatINR(p.price)}/mo` : formatINR(p.price)}
-                  </p>
-                  <div className="mt-3 flex gap-4 border-t border-slate-100 pt-3 text-xs text-slate-400">
-                    <span className="flex items-center gap-1"><Bed className="h-3.5 w-3.5" />{p.beds} Beds</span>
-                    <span className="flex items-center gap-1"><Bath className="h-3.5 w-3.5" />{p.baths} Baths</span>
-                    <span className="flex items-center gap-1"><Maximize className="h-3.5 w-3.5" />{Number(p.sqft).toLocaleString()} sqft</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-3">
-            <div>
-              <h2 className="font-serif text-2xl font-semibold leading-tight text-navy sm:text-3xl">
-                We Provide The Best Property <span className="text-gold-gradient">For You</span>
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-slate-500">
-                {BRAND_NAME} offers verified listings, zero brokerage, and end-to-end support from search to registration.
-              </p>
-              <Link href="/contact">
-                <button className="mt-6 rounded-xl bg-gold-gradient px-6 py-3 text-sm font-semibold text-white shadow-gold hover:brightness-110">
-                  Learn More About Us
-                </button>
-              </Link>
-            </div>
-
-            <div className="space-y-4">
-              {TRUST_STATS.map(({ value, label }, i) => {
-                const Icon = STAT_ICONS[i] ?? Users;
-                return (
-                  <div key={label} className="flex items-center gap-4 rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-gold">
-                      <Icon className="h-5 w-5" />
+          <div className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-1 snap-x snap-mandatory scrollbar-hide sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+            {displayLaunches.map((l, i) => (
+              <motion.div
+                key={l.id}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.55 }}
+                className="w-[min(82vw,320px)] shrink-0 snap-start sm:w-auto sm:shrink"
+              >
+                <Link href="/launches" className="premium-card group block ring-1 ring-orange-100/80">
+                  <div className="relative h-52 overflow-hidden">
+                    <img src={l.image || ""} alt={l.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f1729]/90 via-[#0f1729]/20 to-transparent" />
+                    <span className="absolute left-3 top-3 rounded-lg bg-theme-orange px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-theme-orange">
+                      New Launch
                     </span>
-                    <div>
-                      <p className="text-xl font-bold text-navy">{value}</p>
-                      <p className="text-sm text-slate-500">{label}</p>
+                    <button type="button" className="absolute right-3 top-3 rounded-full bg-white/95 p-2 shadow-md backdrop-blur-sm transition-transform group-hover:scale-110" onClick={(e) => e.preventDefault()}>
+                      <Heart className="h-3.5 w-3.5 text-slate-400 group-hover:text-rose-500" />
+                    </button>
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="text-lg font-bold text-theme-orange">
+                        {l.priceFrom ? `${formatINR(Number(l.priceFrom))}*` : "On Request"}
+                      </p>
+                      <p className="text-[11px] text-white/60">onwards</p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&h=500&fit=crop"
-                alt="Luxury home"
-                className="w-full rounded-2xl object-cover shadow-lg"
-              />
-              <div className="absolute right-4 top-4 rounded-xl bg-gold-gradient px-4 py-2 text-center text-white shadow-gold">
-                <p className="text-xs font-medium opacity-90">Trusted by</p>
-                <p className="text-sm font-bold">Thousands of Families</p>
-              </div>
-            </div>
+                  <div className="p-4">
+                    <h3 className="text-lg text-[#0f1729] transition-colors group-hover:text-orange-700">{l.name}</h3>
+                    <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
+                      <MapPin className="h-3.5 w-3.5 text-orange-500" /> {l.location}, {l.city}
+                    </p>
+                    <p className="mt-2 text-xs text-slate-400">{l.bhk} · Possession {l.possession}</p>
+                    <span className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-emerald-700">
+                      View Details <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="bg-slate-50/80 py-12 sm:py-16">
+      <FeaturedLaunchesSection
+        launches={launches}
+        header={
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}>
+            <SectionHeader
+              theme="purple"
+              eyebrow="Editor's Pick"
+              title={
+                <>
+                  Featured <span className="website-section-title-accent">New Launch</span>
+                </>
+              }
+            />
+          </motion.div>
+        }
+      />
+
+      {/* Cities — Flexospaces-style bento grid */}
+      <ExploreCitiesSection />
+
+      {/* Hot Selling Projects — premium carousel */}
+      <HotSellingProjectsSection />
+
+      {/* Builders — purple */}
+      <section className="section-purple border-y border-violet-100 py-12 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-10 text-center font-serif text-2xl font-semibold text-navy sm:text-3xl">
-            Trusted By Thousands Of Happy Customers
-          </h2>
-          <div className="grid items-center gap-8 lg:grid-cols-2">
-            <div className="hidden items-end justify-center gap-6 lg:flex">
-              <div className="h-48 w-40 rounded-2xl bg-gradient-to-br from-violet-200 to-violet-400 shadow-lg" />
-              <div className="mb-8 h-32 w-24 rounded-full bg-emerald-100 shadow-md" />
-            </div>
-            <div className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-100 sm:p-8">
-              <Quote className="h-10 w-10 text-gold/30" />
-              <div className="mt-2 flex gap-1">{[0,1,2,3,4].map(i => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}</div>
-              <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">&ldquo;{t.text}&rdquo;</p>
-              <div className="mt-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-light font-bold text-gold-dark">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-navy">{t.name}</p>
-                    <p className="text-sm text-slate-500">Home Owner · {t.city}</p>
-                  </div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-8 text-center">
+            <p className="eyebrow-purple justify-center">
+              <Sparkles className="h-3.5 w-3.5" /> Partners
+            </p>
+            <h2 className="website-section-title mt-2">
+              Trusted By India&apos;s <span className="website-section-title-accent">Top Builders</span>
+            </h2>
+          </motion.div>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => setBuilderIdx((i) => (i - 1 + TOP_BUILDERS.length) % TOP_BUILDERS.length)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet-200 bg-white shadow-sm transition-all hover:border-violet-400 hover:shadow-md">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {paddedBuilders.map((name) => (
+                <div key={name} className="flex h-[72px] items-center justify-center rounded-2xl border border-violet-100 bg-white px-3 shadow-sm transition-all hover:border-violet-300 hover:shadow-md">
+                  <span className="text-center text-sm font-bold tracking-tight text-[#0f1729]">{name}</span>
                 </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setTestimonialIdx((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50">
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button onClick={() => setTestimonialIdx((i) => (i + 1) % TESTIMONIALS.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50">
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
+            <button type="button" onClick={() => setBuilderIdx((i) => (i + 1) % TOP_BUILDERS.length)} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-violet-200 bg-white shadow-sm transition-all hover:border-violet-400 hover:shadow-md">
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="py-10 sm:py-12">
+      {/* Why Choose — orange */}
+      <section className="section-orange py-14 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-6 rounded-2xl bg-violet-50 px-6 py-8 sm:flex-row sm:px-10 sm:py-10">
-            <div>
-              <h3 className="font-serif text-xl font-semibold text-navy sm:text-2xl">Subscribe to our newsletter</h3>
-              <p className="mt-1 text-sm text-slate-500">Get the latest property updates and offers.</p>
-            </div>
-            <div className="flex w-full max-w-md gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="h-11 flex-1 rounded-xl border border-violet-100 bg-white px-4 text-sm outline-none focus:border-gold focus:ring-2 focus:ring-gold/15"
-              />
-              <button className="h-11 shrink-0 rounded-xl bg-gold-gradient px-5 text-sm font-semibold text-white shadow-gold hover:brightness-110">
-                Subscribe
-              </button>
-            </div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mb-10 text-center">
+            <p className="eyebrow-orange justify-center">
+              <Sparkles className="h-3.5 w-3.5" /> Our Promise
+            </p>
+            <h2 className="website-section-title mt-2">
+              Why Choose{" "}
+              <BrandWordmark size="inherit" className="website-section-title-accent inline tracking-[0.08em]" />
+              ?
+            </h2>
+          </motion.div>
+          <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3">
+            {WHY_CHOOSE.map(({ title, desc, icon }, i) => {
+              const Icon = WHY_ICONS[icon as keyof typeof WHY_ICONS] ?? ShieldCheck;
+              return (
+                <motion.div key={title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="group rounded-2xl border border-orange-100 bg-white p-5 shadow-sm transition-all duration-300 hover:border-orange-200 hover:shadow-lg sm:p-6">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-orange-600 ring-1 ring-orange-200/60 transition-transform group-hover:scale-105">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 text-base text-[#0f1729] sm:text-lg">{title}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-500 sm:text-sm">{desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
+        </div>
+      </section>
+
+      {/* Stats — purple dark */}
+      <section className="section-purple-dark relative overflow-hidden py-14 sm:py-16">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(139,92,246,0.12),transparent_50%)]" />
+        <div className="relative mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
+          {PLATFORM_STATS.map(({ value, label, icon }, i) => {
+            const Icon = STAT_ICONS[icon as keyof typeof STAT_ICONS] ?? Building2;
+            return (
+              <motion.div key={label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
+                <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-300 ring-1 ring-violet-400/25">
+                  <Icon className="h-6 w-6" />
+                </span>
+                <p className="website-type mt-4 text-3xl text-white sm:text-4xl">{value}</p>
+                <p className="mt-1 text-sm text-white/50">{label}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Testimonials — orange */}
+      <section className="section-orange py-14 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+            <SectionHeader
+              theme="orange"
+              eyebrow="Reviews"
+              title={
+                <>
+                  What Our <span className="website-section-title-accent">Customers</span> Say
+                </>
+              }
+              href="/contact"
+              linkText="View All Reviews"
+            />
+          </motion.div>
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => setTestimonialStart((i) => (i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)} className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-orange-200 bg-white shadow-sm hover:border-orange-400 sm:flex">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <div className="grid flex-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {visibleTestimonials.map((t, i) => (
+                <motion.div key={`${t.name}-${i}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className={`relative rounded-2xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-lg ${i === 1 ? "border-orange-200/80 ring-2 ring-orange-100 lg:-mt-2 lg:mb-2 lg:shadow-md" : "border-orange-100/60"}`}>
+                  <Quote className="h-8 w-8 text-orange-200" />
+                  <div className="mt-2 flex gap-0.5">
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <Star key={j} className="h-4 w-4 fill-orange-400 text-orange-400" />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-slate-600">&ldquo;{t.text}&rdquo;</p>
+                  <div className="mt-5 flex items-center gap-3 border-t border-orange-100 pt-4">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-orange-100 text-sm font-bold text-orange-900">
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-[#0f1729]">{t.name}</p>
+                      <p className="text-xs text-slate-500">{t.city}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <button type="button" onClick={() => setTestimonialStart((i) => (i + 1) % TESTIMONIALS.length)} className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full border border-orange-200 bg-white shadow-sm hover:border-orange-400 sm:flex">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* App promo — purple */}
+      <section className="section-purple pb-14 sm:pb-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2d1b69] via-[#1e1035] to-[#2d1b69] px-8 py-10 sm:flex sm:items-center sm:justify-between sm:px-12 sm:py-12">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-500/15 blur-3xl" />
+            <div className="relative max-w-md">
+              <p className="website-badge-text text-violet-300">Mobile App</p>
+              <h3 className="website-type mt-2 text-2xl text-white sm:text-3xl">Find Your Dream Home On The Go</h3>
+              <p className="website-body-text mt-3 text-white/60">
+                Exclusive deals, instant alerts & virtual site visits — all in your pocket.
+              </p>
+            </div>
+            <div className="relative mt-8 flex flex-wrap items-center gap-4 sm:mt-0">
+              <div className="flex h-28 w-28 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/10 text-[10px] text-white/40 backdrop-blur-sm">
+                QR Code
+              </div>
+              <div className="flex flex-col gap-2.5">
+                <button type="button" className="rounded-xl bg-theme-purple px-6 py-3 text-sm font-bold text-white shadow-theme-purple">Google Play</button>
+                <button type="button" className="rounded-xl border border-violet-400/30 bg-violet-500/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm hover:bg-violet-500/20">App Store</button>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>

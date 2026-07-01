@@ -233,6 +233,13 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.text-orange-gradient {
+  background: linear-gradient(135deg, #FDBA74 0%, #FB923C 40%, #F97316 70%, #EA580C 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .shadow-gold {
   box-shadow: 0 8px 28px rgba(124, 58, 237, 0.35);
 }
@@ -341,4 +348,265 @@ body {
 }
 .lux-link:hover::after {
   width: 100%;
+}
+
+/* ── Premium homepage — orange OR purple (never mixed in one element) ── */
+.text-theme-orange {
+  background: linear-gradient(135deg, #fdba74 0%, #f97316 50%, #ea580c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-theme-purple {
+  background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 45%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-theme-orange {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.bg-theme-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+}
+
+.shadow-theme-orange {
+  box-shadow: 0 8px 28px rgba(249, 115, 22, 0.35);
+}
+
+.shadow-theme-purple {
+  box-shadow: 0 8px 28px rgba(124, 58, 237, 0.35);
+}
+
+.section-orange {
+  background-color: #fffbf7;
+  background-image: radial-gradient(ellipse 70% 50% at 20% 0%, rgba(249, 115, 22, 0.07) 0%, transparent 55%);
+}
+
+.section-purple {
+  background-color: #faf8ff;
+  background-image: radial-gradient(ellipse 70% 50% at 80% 0%, rgba(124, 58, 237, 0.07) 0%, transparent 55%);
+}
+
+.section-purple-dark {
+  background: linear-gradient(180deg, #1e1035 0%, #2d1b69 50%, #1a0f30 100%);
+}
+
+.eyebrow-orange {
+  @apply font-sans text-[11px] font-semibold tracking-wide inline-flex items-center gap-2 text-orange-600;
+}
+
+.eyebrow-purple {
+  @apply font-sans text-[11px] font-semibold tracking-wide inline-flex items-center gap-2 text-violet-600;
+}
+
+.accent-bar-orange {
+  @apply mt-3 h-0.5 w-12 rounded-full bg-orange-500;
+}
+
+.accent-bar-purple {
+  @apply mt-3 h-0.5 w-12 rounded-full bg-violet-500;
+}
+
+.text-gold-premium {
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 35%, #d97706 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-orange-purple {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 35%, #c084fc 65%, #9333ea 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-orange-purple {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 40%, #9333ea 100%);
+}
+
+.shadow-orange-purple {
+  box-shadow: 0 8px 32px rgba(147, 51, 234, 0.25), 0 4px 16px rgba(249, 115, 22, 0.2);
+}
+
+.ring-orange-purple {
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.25), 0 0 0 1px rgba(147, 51, 234, 0.15);
+}
+
+.bg-gold-premium {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 50%, #b45309 100%);
+}
+
+.shadow-gold-premium {
+  box-shadow: 0 8px 32px rgba(217, 119, 6, 0.35), 0 2px 8px rgba(217, 119, 6, 0.15);
+}
+
+.premium-glass {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.premium-card {
+  @apply overflow-hidden rounded-2xl bg-white transition-all duration-500;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.premium-card:hover {
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.06);
+  transform: translateY(-4px);
+}
+
+.premium-section-dark {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(251, 191, 36, 0.08) 0%, transparent 60%),
+    linear-gradient(180deg, #0f1729 0%, #1a2744 50%, #0f1729 100%);
+}
+
+.premium-mesh-light {
+  background-color: #faf9f7;
+  background-image:
+    radial-gradient(at 20% 20%, rgba(251, 191, 36, 0.06) 0%, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(26, 39, 68, 0.04) 0%, transparent 45%),
+    radial-gradient(at 60% 80%, rgba(251, 191, 36, 0.04) 0%, transparent 40%);
+}
+
+.premium-eyebrow {
+  @apply font-sans text-[11px] font-semibold tracking-wide inline-flex items-center gap-2 text-amber-600;
+}
+
+.premium-heading {
+  @apply font-heading text-2xl font-extrabold tracking-tight text-[#111827] sm:text-3xl lg:text-[2rem] leading-[1.2];
+}
+
+/* Beyond Space–style section headings: bold Poppins + purple→cyan accent */
+.website-section-title {
+  @apply font-heading text-2xl font-black tracking-tight text-[#111827] sm:text-3xl lg:text-[2rem] leading-[1.2];
+}
+
+.website-section-title-accent {
+  background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 42%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.website-section-desc {
+  @apply font-sans text-base font-normal leading-relaxed text-gray-600 sm:text-lg;
+}
+
+@keyframes premium-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+.premium-shimmer {
+  animation: premium-shimmer 3s ease-in-out infinite;
+}
+
+.premium-nav-blur {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Website typography — hero badge style (Inter semibold, tracking-wide) ── */
+.website-theme {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  @apply antialiased;
+}
+
+.website-type {
+  @apply font-sans font-semibold tracking-wide;
+}
+
+.website-badge-text {
+  @apply font-sans text-[11px] font-semibold tracking-wide;
+}
+
+.website-body-text {
+  @apply font-sans text-sm font-medium tracking-wide;
+}
+
+.website-theme :where(h1, h2, h3, h4, h5, h6) {
+  @apply font-sans font-semibold tracking-wide;
+}
+
+.website-theme :where(p, li, label, input, select, textarea) {
+  @apply font-sans tracking-wide;
+}
+
+.website-theme .font-serif,
+.website-theme .font-script {
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+/* Hero mockup — muted gold accent */
+@keyframes hero-dream-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4)); }
+  50% { filter: drop-shadow(0 0 18px rgba(249, 115, 22, 0.65)); }
+}
+.hero-dream-glow {
+  animation: hero-dream-glow 3s ease-in-out infinite;
+}
+
+@keyframes hero-badge-shine {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.hero-badge-shine {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: hero-badge-shine 4s ease-in-out infinite;
+}
+
+.hero-video-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+.hero-text-shadow {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.hero-subtitle-glow {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Hot selling — bold rank overlay on project cards */
+.hot-rank-number {
+  font-size: 5.5rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.55),
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    0 0 60px rgba(249, 115, 22, 0.2);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
+}
+
+@media (min-width: 640px) {
+  .hot-rank-number {
+    font-size: 6.5rem;
+  }
+}
+
+.bg-hero-gold {
+  background: linear-gradient(180deg, #d4b068 0%, #c5a059 50%, #a88648 100%);
+}
+.text-hero-gold {
+  color: #b8923f;
+}
+.border-hero-gold {
+  border-color: #c5a059;
 }

@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Great_Vibes } from "next/font/google";
+import { Inter, Poppins, Playfair_Display, Great_Vibes } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
 });
 
 const playfair = Playfair_Display({
@@ -32,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} ${greatVibes.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${poppins.variable} ${playfair.variable} ${greatVibes.variable} h-full antialiased`}>
       <head />
       <body className="min-h-full font-sans">{children}</body>
     </html>

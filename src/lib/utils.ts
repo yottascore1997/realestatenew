@@ -17,6 +17,14 @@ export function formatINR(amount: number) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
 }
 
+export function formatPriceRange(from: number, to: number) {
+  const unit = (amount: number) => {
+    if (amount >= 10000000) return `${(amount / 10000000).toFixed(2)} Cr`;
+    return `${(amount / 100000).toFixed(2)} Lac`;
+  };
+  return `₹ ${unit(from)} to ${unit(to)}`;
+}
+
 export function formatNumber(num: number) {
   return new Intl.NumberFormat("en-US").format(num);
 }

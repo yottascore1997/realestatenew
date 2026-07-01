@@ -21,8 +21,8 @@ export default async function LaunchesPage() {
   return (
     <div className="py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-900">New Launches</h1>
-        <p className="mt-2 text-slate-500">{launches.length} exclusive pre-launch & live opportunities</p>
+        <h1 className="text-3xl text-slate-900">New Launches</h1>
+        <p className="website-body-text mt-2 text-slate-500">{launches.length} exclusive pre-launch & live opportunities</p>
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {launches.map((launch) => (
             <div key={launch.id} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-shadow hover:shadow-xl">

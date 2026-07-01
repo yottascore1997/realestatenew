@@ -6,8 +6,8 @@ export default function ContactPage() {
   return (
     <div className="py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-slate-900">Contact Us</h1>
-        <p className="mt-2 text-slate-500">Get in touch with our team</p>
+        <h1 className="text-3xl text-slate-900">Contact Us</h1>
+        <p className="website-body-text mt-2 text-slate-500">Get in touch with our team</p>
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
           <Card>
             <h2 className="mb-4 text-lg font-semibold text-slate-900">Send Enquiry</h2>
