@@ -270,6 +270,10 @@ model Launch {
   images      Json?
   priceFrom   Decimal?     @db.Decimal(15, 2)
   priceTo     Decimal?     @db.Decimal(15, 2)
+  builder     String?
+  bhk         String?
+  possession  String?
+  offer       String?
   featured    Boolean      @default(false)
   projectId   String?
   createdAt   DateTime     @default(now())
@@ -851,4 +855,20 @@ model Salary {
   createdAt   DateTime @default(now())
 
   employee User @relation(fields: [employeeId], references: [id])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String?
+  city      String
+  text      String   @db.Text
+  rating    Int      @default(5)
+  image     String?
+  avatar    String?
+  featured  Boolean  @default(false)
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

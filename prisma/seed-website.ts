@@ -111,6 +111,10 @@ const LAUNCHES = [
     image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=520&fit=crop",
     priceFrom: 9500000,
     priceTo: 18000000,
+    builder: "Lodha Group",
+    bhk: "2, 3 & 4 BHK",
+    possession: "Dec 2027",
+    offer: "5% launch discount + flexible payment plan",
     featured: true,
     projectSlug: "marina-bay-towers",
   },
@@ -295,6 +299,53 @@ const PROPERTIES = [
   },
 ];
 
+const TESTIMONIALS = [
+  {
+    name: "Rahul & Priya Sharma",
+    role: "Homeowner",
+    city: "Pune",
+    text: "Triyards made our first home purchase seamless. Zero brokerage and excellent legal support throughout.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=12",
+    featured: false,
+    sortOrder: 0,
+  },
+  {
+    name: "Amit Patel",
+    role: "Investor",
+    city: "Ahmedabad",
+    text: "Sold my apartment in 3 weeks through Triyards. Professional team, verified buyers, no middlemen.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=33",
+    featured: true,
+    sortOrder: 1,
+  },
+  {
+    name: "Neha Reddy",
+    role: "Homeowner",
+    city: "Hyderabad",
+    text: "Home loan + property search + registration — everything handled under one roof. Highly recommend!",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=47",
+    featured: false,
+    sortOrder: 2,
+  },
+  {
+    name: "Vikram Singh",
+    role: "Homeowner",
+    city: "Gurgaon",
+    text: "The site visit coordination was flawless. We found our dream 3 BHK within two weeks.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=15",
+    featured: false,
+    sortOrder: 3,
+  },
+];
+
 export async function seedWebsite(prisma: PrismaClient, agentId: string) {
   const builderMap: Record<string, string> = {};
 
@@ -355,6 +406,10 @@ export async function seedWebsite(prisma: PrismaClient, agentId: string) {
         image: l.image,
         priceFrom: l.priceFrom,
         priceTo: l.priceTo,
+        builder: "builder" in l ? l.builder : undefined,
+        bhk: "bhk" in l ? l.bhk : undefined,
+        possession: "possession" in l ? l.possession : undefined,
+        offer: "offer" in l ? l.offer : undefined,
         featured: l.featured,
         projectId: l.projectSlug ? projectMap[l.projectSlug] : null,
       },
@@ -369,6 +424,10 @@ export async function seedWebsite(prisma: PrismaClient, agentId: string) {
         image: l.image,
         priceFrom: l.priceFrom,
         priceTo: l.priceTo,
+        builder: "builder" in l ? l.builder : null,
+        bhk: "bhk" in l ? l.bhk : null,
+        possession: "possession" in l ? l.possession : null,
+        offer: "offer" in l ? l.offer : null,
         featured: l.featured,
         projectId: l.projectSlug ? projectMap[l.projectSlug] : null,
       },
@@ -414,6 +473,11 @@ export async function seedWebsite(prisma: PrismaClient, agentId: string) {
       },
     });
     properties.push(property);
+  }
+
+  const testimonialCount = await prisma.testimonial.count();
+  if (testimonialCount === 0) {
+    await prisma.testimonial.createMany({ data: TESTIMONIALS });
   }
 
   const skylineProject = await prisma.project.findUnique({ where: { slug: "skyline-residences" } });

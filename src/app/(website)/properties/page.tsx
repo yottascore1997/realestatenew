@@ -4,6 +4,7 @@ import {
   PropertiesPageContent,
   type PropertyListing,
 } from "@/components/website/properties-page-content";
+import { getHeroSearchData } from "@/lib/website/get-hero-data";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ const FALLBACK_PROPERTIES: PropertyListing[] = [
     city: "Mumbai",
     price: 48500000,
     type: "APARTMENT",
+    status: "FOR_SALE",
     bedrooms: 3,
     bathrooms: 3,
     sqft: 2100,
@@ -36,6 +38,7 @@ const FALLBACK_PROPERTIES: PropertyListing[] = [
     city: "Mumbai",
     price: 62000000,
     type: "PENTHOUSE",
+    status: "FOR_SALE",
     bedrooms: 4,
     bathrooms: 4,
     sqft: 3200,
@@ -54,6 +57,7 @@ const FALLBACK_PROPERTIES: PropertyListing[] = [
     city: "Bangalore",
     price: 18500000,
     type: "VILLA",
+    status: "FOR_SALE",
     bedrooms: 4,
     bathrooms: 4,
     sqft: 2800,
@@ -72,6 +76,7 @@ const FALLBACK_PROPERTIES: PropertyListing[] = [
     city: "Mumbai",
     price: 38000000,
     type: "APARTMENT",
+    status: "FOR_SALE",
     bedrooms: 3,
     bathrooms: 3,
     sqft: 1850,
@@ -90,6 +95,7 @@ const FALLBACK_PROPERTIES: PropertyListing[] = [
     city: "Pune",
     price: 7200000,
     type: "APARTMENT",
+    status: "FOR_SALE",
     bedrooms: 2,
     bathrooms: 2,
     sqft: 1100,
@@ -108,6 +114,7 @@ const FALLBACK_PROPERTIES: PropertyListing[] = [
     city: "Gurgaon",
     price: 45000000,
     type: "VILLA",
+    status: "FOR_SALE",
     bedrooms: 5,
     bathrooms: 5,
     sqft: 4500,
@@ -138,6 +145,7 @@ function toListing(p: PropertyWithProject): PropertyListing {
     city: p.city,
     price: Number(p.price),
     type: p.type,
+    status: p.status,
     bedrooms: p.bedrooms,
     bathrooms: p.bathrooms,
     sqft: p.sqft,
@@ -153,9 +161,14 @@ function toListing(p: PropertyWithProject): PropertyListing {
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams: { search?: string };
+  searchParams: {
+    search?: string;
+    type?: string;
+    status?: string;
+    budget?: string;
+  };
 }) {
-  const search = searchParams.search;
+  const heroData = await getHeroSearchData();
   let properties: PropertyListing[] = [];
 
   try {
@@ -172,5 +185,16 @@ export default async function PropertiesPage({
     properties = FALLBACK_PROPERTIES;
   }
 
-  return <PropertiesPageContent properties={properties} initialSearch={search ?? ""} />;
+  return (
+    <PropertiesPageContent
+      properties={properties}
+      cities={heroData.cities}
+      initialFilters={{
+        search: searchParams.search,
+        type: searchParams.type,
+        status: searchParams.status,
+        budget: searchParams.budget,
+      }}
+    />
+  );
 }

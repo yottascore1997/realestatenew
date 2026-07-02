@@ -1,18 +1,18 @@
-import { Navbar } from "@/components/website/navbar";
-import { Footer } from "@/components/website/footer";
+import { WebsiteShell } from "@/components/website/website-shell";
+import { getHeroSearchData } from "@/lib/website/get-hero-data";
 
 export const dynamic = "force-dynamic";
 
-export default function WebsiteLayout({
+export default async function WebsiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const heroData = await getHeroSearchData();
+
   return (
     <div className="website-theme flex min-h-screen flex-col">
-      <Navbar />
-      <main className="flex-1">{children}</main>
-      <Footer />
+      <WebsiteShell stats={heroData.stats}>{children}</WebsiteShell>
     </div>
   );
 }

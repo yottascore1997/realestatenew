@@ -6,11 +6,15 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Search, Menu, X, MapPin, Building2, ChevronDown, Play, Rocket,
-  Phone, ShieldCheck, Award, BadgeCheck, Landmark, Home, Key, Store,
+  Phone, ShieldCheck, Award, BadgeCheck, Landmark, Home, Key, Store, Wallet,
 } from "lucide-react";
-import { WEBSITE_NAV, BRAND_PHONE, HERO_TRUST_ITEMS } from "@/lib/website/constants";
+import { WEBSITE_NAV, BRAND_PHONE } from "@/lib/website/constants";
 import { BrandWordmark } from "@/components/website/brand-wordmark";
+import { ContactTrigger } from "@/components/website/contact-trigger";
+import { IconSelect } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import type { HeroSearchData } from "@/lib/website/get-hero-data";
+import { HERO_BUDGET_OPTIONS } from "@/lib/website/get-hero-data";
 
 export const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260403_050628_c4e32401-fab4-4a27-b7a8-6e9291cd5959.mp4";
@@ -24,7 +28,30 @@ const SEARCH_TABS = [
 
 const TRUST_ICONS = { ShieldCheck, Building2, Award, BadgeCheck, Landmark };
 
-const TRUST_DISPLAY = HERO_TRUST_ITEMS.slice(0, 4);
+function buildTrustItems(stats: HeroSearchData["stats"]) {
+  const fmt = (n: number, fallback: string) => (n > 0 ? `${n.toLocaleString("en-IN")}+` : fallback);
+  return [
+    { label: "RERA Verified", icon: "ShieldCheck" as const },
+    { label: `${fmt(stats.projectCount, "2000+")} Projects`, icon: "Building2" as const },
+    { label: `${fmt(stats.propertyCount, "1200+")} Properties`, icon: "Award" as const },
+    { label: `${fmt(stats.cityCount, "25+")} Cities`, icon: "BadgeCheck" as const },
+  ];
+}
+
+function navBadge(label: string, stats: HeroSearchData["stats"]) {
+  if (label === "New Projects" && stats.projectCount > 0) return stats.projectCount;
+  if (label === "Buy" && stats.propertyCount > 0) return stats.propertyCount;
+  return null;
+}
+
+type HeroSectionProps = {
+  heroData: HeroSearchData;
+};
+
+const heroSelectShell =
+  "focus-within:border-orange-400 focus-within:ring-4 focus-within:ring-orange-200 hover:border-orange-300 hover:shadow-[0_4px_16px_rgba(249,115,22,0.12)]";
+
+const heroSelectIcon = "h-4 w-4 shrink-0 text-slate-400 transition-colors group-focus-within:text-orange-500";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -45,7 +72,7 @@ const trustItem = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
 };
 
-export function HeroSection() {
+export function HeroSection({ heroData }: HeroSectionProps) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("buy");
@@ -54,11 +81,27 @@ export function HeroSection() {
   const [budget, setBudget] = useState("");
   const [videoOpen, setVideoOpen] = useState(false);
 
+  const { cities, propertyTypes, stats } = heroData;
+  const trustDisplay = buildTrustItems(stats);
+
   const handleSearch = () => {
     const tab = SEARCH_TABS.find((t) => t.key === activeTab);
     const params = new URLSearchParams();
     if (location) params.set("search", location);
-    router.push(`${tab?.href ?? "/properties"}?${params.toString()}`);
+    if (propertyType) params.set("type", propertyType);
+    if (budget) params.set("budget", budget);
+
+    if (activeTab === "rent") {
+      params.set("status", "FOR_RENT");
+    } else if (activeTab === "commercial") {
+      params.set("status", "FOR_SALE");
+      if (!propertyType) params.set("type", "COMMERCIAL");
+    } else if (activeTab === "buy") {
+      params.set("status", "FOR_SALE");
+    }
+
+    const qs = params.toString();
+    router.push(`${tab?.href ?? "/properties"}${qs ? `?${qs}` : ""}`);
   };
 
   return (
@@ -80,17 +123,25 @@ export function HeroSection() {
           </Link>
 
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 xl:flex">
-            {WEBSITE_NAV.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="group relative flex items-center gap-1 text-[13px] font-medium text-slate-600 transition-colors hover:text-[#0f1729]"
-              >
-                {item.label}
-                {item.label === "Services" && <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
-                <span className="absolute -bottom-1 left-0 h-0.5 w-0 rounded-full bg-orange-500 transition-all duration-300 group-hover:w-full" />
-              </Link>
-            ))}
+            {WEBSITE_NAV.map((item) => {
+              const badge = navBadge(item.label, stats);
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="group relative flex items-center gap-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:text-[#0f1729]"
+                >
+                  {item.label}
+                  {badge !== null && (
+                    <span className="rounded-full bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold text-orange-700">
+                      {badge}
+                    </span>
+                  )}
+                  {item.label === "Services" && <ChevronDown className="h-3.5 w-3.5 text-slate-400" />}
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-0 rounded-full bg-orange-500 transition-all duration-300 group-hover:w-full" />
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="ml-auto hidden items-center gap-5 lg:flex">
@@ -98,15 +149,15 @@ export function HeroSection() {
               <Phone className="h-4 w-4 text-orange-500" strokeWidth={2} />
               {BRAND_PHONE}
             </a>
-            <Link href="/contact">
-              <motion.button
+            <ContactTrigger>
+              <motion.span
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                className="rounded-lg bg-[#0f1729] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#1a2744]"
+                className="inline-block rounded-lg bg-[#0f1729] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#1a2744]"
               >
                 Contact Us
-              </motion.button>
-            </Link>
+              </motion.span>
+            </ContactTrigger>
           </div>
 
           <button type="button" className="ml-auto lg:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
@@ -125,9 +176,12 @@ export function HeroSection() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/contact" onClick={() => setMenuOpen(false)}>
-              <button className="mt-2 w-full rounded-lg bg-[#0f1729] py-2.5 text-sm font-semibold text-white">Contact Us</button>
-            </Link>
+            <ContactTrigger
+              onClick={() => setMenuOpen(false)}
+              className="mt-2 w-full rounded-lg bg-[#0f1729] py-2.5 text-sm font-semibold text-white"
+            >
+              Contact Us
+            </ContactTrigger>
           </motion.div>
         )}
       </header>
@@ -192,7 +246,11 @@ export function HeroSection() {
             variants={fadeUp}
             className="hero-subtitle-glow website-body-text mt-2.5 max-w-md text-orange-50/90 sm:mt-3 sm:text-[15px]"
           >
-            Premium properties. Trusted builders. Outstanding experiences.
+            Premium properties across{" "}
+            {stats.cityCount > 0 ? `${stats.cityCount} cities` : "top cities"} —{" "}
+            {stats.propertyCount > 0
+              ? `${stats.propertyCount.toLocaleString("en-IN")}+ listings from database`
+              : "trusted builders & outstanding experiences"}
           </motion.p>
 
           <motion.div
@@ -267,27 +325,42 @@ export function HeroSection() {
             </div>
 
             <div className="flex flex-col gap-3 p-3.5 sm:flex-row sm:items-stretch sm:p-4">
-              {[
-                { icon: MapPin, value: location, onChange: setLocation, placeholder: "Select City", defaultLabel: "Mumbai", options: ["Mumbai", "Pune", "Bangalore", "Delhi NCR", "Hyderabad"] },
-                { icon: Building2, value: propertyType, onChange: setPropertyType, placeholder: "Property Type", defaultLabel: "All Type", options: ["Apartment", "Villa", "Plot", "Commercial"] },
-                { icon: null, value: budget, onChange: setBudget, placeholder: "Budget", defaultLabel: "Any Budget", options: ["Under ₹50 Lakh", "₹50L – ₹1 Cr", "Above ₹2 Cr"] },
-              ].map(({ icon: Icon, value, onChange, placeholder, defaultLabel, options }) => (
-                <div
-                  key={placeholder}
-                  className="group flex min-h-[48px] flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 transition-all duration-300 focus-within:border-orange-400/60 focus-within:shadow-[0_0_0_3px_rgba(249,115,22,0.1)]"
-                >
-                  {Icon && <Icon className="h-4 w-4 shrink-0 text-slate-400 transition-colors group-focus-within:text-orange-500" strokeWidth={1.75} />}
-                  <select
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    className="w-full cursor-pointer appearance-none bg-transparent text-sm font-medium text-slate-700 outline-none"
-                  >
-                    <option value="">{defaultLabel}</option>
-                    {options.map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                  <ChevronDown className="pointer-events-none h-4 w-4 shrink-0 text-slate-400" />
-                </div>
-              ))}
+              <IconSelect
+                icon={<MapPin className={heroSelectIcon} strokeWidth={1.75} />}
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                shellClassName={cn(heroSelectShell, "flex-1")}
+              >
+                <option value="">Select City</option>
+                {cities.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </IconSelect>
+
+              <IconSelect
+                icon={<Building2 className={heroSelectIcon} strokeWidth={1.75} />}
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value)}
+                shellClassName={cn(heroSelectShell, "flex-1")}
+              >
+                <option value="">All Type</option>
+                {propertyTypes.map(({ value, label, count }) => (
+                  <option key={value} value={value}>
+                    {label}{count > 0 ? ` (${count})` : ""}
+                  </option>
+                ))}
+              </IconSelect>
+
+              <IconSelect
+                icon={<Wallet className={heroSelectIcon} strokeWidth={1.75} />}
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                shellClassName={cn(heroSelectShell, "flex-1")}
+              >
+                {HERO_BUDGET_OPTIONS.map(({ value, label }) => (
+                  <option key={value || "any"} value={value}>{label}</option>
+                ))}
+              </IconSelect>
 
               <motion.button
                 type="button"
@@ -313,7 +386,7 @@ export function HeroSection() {
         className="relative z-10 bg-[#0a0a0a]"
       >
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-3 gap-y-2.5 px-4 py-3 sm:gap-x-4 sm:py-3.5 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {TRUST_DISPLAY.map(({ label, icon }) => {
+          {trustDisplay.map(({ label, icon }) => {
             const Icon = TRUST_ICONS[icon as keyof typeof TRUST_ICONS] ?? ShieldCheck;
             return (
               <motion.div

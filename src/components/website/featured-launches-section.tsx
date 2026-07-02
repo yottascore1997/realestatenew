@@ -5,19 +5,20 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
 import { PLACEHOLDER_LAUNCHES } from "@/lib/website/constants";
+import { ContactTrigger } from "@/components/website/contact-trigger";
 import { cn } from "@/lib/utils";
 
 export type FeaturedLaunch = {
   id: string;
   name: string;
-  builder?: string;
+  builder?: string | null;
   location: string;
   city: string;
   priceFrom?: number | null;
   priceTo?: number | null;
-  bhk?: string;
-  possession?: string;
-  offer?: string;
+  bhk?: string | null;
+  possession?: string | null;
+  offer?: string | null;
   image?: string | null;
 };
 
@@ -119,12 +120,14 @@ function FeaturedCard({ launch }: { launch: FeaturedLaunch & { builder: string; 
           )}
         </div>
 
-        <Link
-          href="/contact"
+        <ContactTrigger
+          inquiryType="New Projects"
+          context={`${launch.name} — ${launch.city}`}
+          defaultMessage={`I'm interested in ${launch.name} at ${launch.location}, ${launch.city}.`}
           className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-[0_4px_16px_rgba(5,150,105,0.35)] transition-colors hover:bg-emerald-700 sm:mt-6 sm:h-12 sm:text-base lg:h-[52px] lg:text-lg"
         >
           Contact
-        </Link>
+        </ContactTrigger>
       </div>
     </div>
   );

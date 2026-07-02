@@ -8,11 +8,24 @@ type ProjectWithBuilder = Prisma.ProjectGetPayload<{
   include: { builder: true; _count: { select: { properties: true } } };
 }>;
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: { search?: string };
+}) {
+  const citySearch = searchParams.search?.trim();
   let projects: ProjectWithBuilder[] = [];
 
   try {
     projects = await prisma.project.findMany({
+      where: citySearch
+        ? {
+            OR: [
+              { city: { contains: citySearch } },
+              { location: { contains: citySearch } },
+            ],
+          }
+        : undefined,
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
       include: { builder: true, _count: { select: { properties: true } } },
     });
@@ -24,7 +37,10 @@ export default async function ProjectsPage() {
     <div className="py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl text-slate-900">Our Projects</h1>
-        <p className="website-body-text mt-2 text-slate-500">{projects.length} premium developments across India</p>
+        <p className="website-body-text mt-2 text-slate-500">
+          {projects.length} premium developments
+          {citySearch ? ` in ${citySearch}` : " across India"}
+        </p>
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <div key={project.id} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-shadow hover:shadow-xl">

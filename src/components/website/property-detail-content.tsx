@@ -9,6 +9,7 @@ import {
   Send, MessageSquare, Link2, Layers, Compass, Clock,
 } from "lucide-react";
 import { cn, formatINR } from "@/lib/utils";
+import { ContactTrigger } from "@/components/website/contact-trigger";
 import type { PropertyDetail } from "@/lib/website/property-detail-data";
 
 const AMENITY_ICONS: Record<string, typeof Waves> = {
@@ -278,19 +279,23 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
             <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
               <p className="text-2xl font-bold text-emerald-600 sm:text-3xl">{formatINR(property.price)}</p>
               <p className="mt-0.5 text-xs text-slate-400">All Inclusive</p>
-              <Link
-                href="/contact"
+              <ContactTrigger
+                inquiryType="Request Site Visit"
+                context={property.title}
+                defaultMessage={`I would like to schedule a site visit for ${property.title} in ${property.city}.`}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded bg-emerald-600 py-3 text-sm font-bold text-white hover:bg-emerald-700"
               >
                 <Calendar className="h-4 w-4" />
                 Request a Visit
-              </Link>
-              <Link
-                href="/contact"
+              </ContactTrigger>
+              <ContactTrigger
+                inquiryType="Buy Property"
+                context={property.title}
+                defaultMessage={`Please share more details about ${property.title}.`}
                 className="mt-2.5 flex w-full items-center justify-center rounded border-2 border-emerald-600 py-2.5 text-sm font-bold text-emerald-600 hover:bg-emerald-50"
               >
                 Get More Details
-              </Link>
+              </ContactTrigger>
             </div>
 
             {/* Contact Agent */}

@@ -1,58 +1,71 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Mail, Phone, MapPin } from "lucide-react";
+"use client";
+
+import { Mail, Phone, MapPin, MessageSquare, Sparkles } from "lucide-react";
+import { ContactTrigger } from "@/components/website/contact-trigger";
+import { BRAND_PHONE } from "@/lib/website/constants";
 
 export default function ContactPage() {
   return (
-    <div className="py-12">
+    <div className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl text-slate-900">Contact Us</h1>
-        <p className="website-body-text mt-2 text-slate-500">Get in touch with our team</p>
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <Card>
-            <h2 className="mb-4 text-lg font-semibold text-slate-900">Send Enquiry</h2>
-            <form className="space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Name</label>
-                <input className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#4F6BF5]" placeholder="Your name" />
+        <div className="text-center">
+          <p className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-violet-600">
+            <Sparkles className="h-3.5 w-3.5" /> We&apos;re Here to Help
+          </p>
+          <h1 className="website-section-title mt-3 text-3xl sm:text-4xl">
+            Contact <span className="website-section-title-accent">TriYards</span>
+          </h1>
+          <p className="website-body-text mx-auto mt-3 max-w-xl text-slate-500">
+            Have a question about a property or project? Fill the enquiry form and our experts will get back to you.
+          </p>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50/80 via-white to-emerald-50/50 p-8 shadow-sm">
+            <h2 className="font-heading text-xl font-black text-[#111827]">Send an Enquiry</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Opens a quick form — takes less than a minute. Your details go straight to our CRM team.
+            </p>
+            <ContactTrigger
+              title="Contact TriYards"
+              subtitle="Our property advisors are ready to help you find the perfect home."
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 py-3.5 text-sm font-bold text-white shadow-[0_4px_16px_rgba(5,150,105,0.35)] transition-colors hover:bg-emerald-700 sm:w-auto sm:px-8"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Open Enquiry Form
+            </ContactTrigger>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100">
+                <Phone className="h-5 w-5 text-violet-600" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Email</label>
-                <input type="email" className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#4F6BF5]" placeholder="your@email.com" />
+                <p className="font-bold text-slate-900">Phone</p>
+                <a href={`tel:${BRAND_PHONE.replace(/\s/g, "")}`} className="text-sm text-slate-500 hover:text-violet-600">
+                  {BRAND_PHONE}
+                </a>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100">
+                <Mail className="h-5 w-5 text-violet-600" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Phone</label>
-                <input className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#4F6BF5]" placeholder="+91 98765 43210" />
+                <p className="font-bold text-slate-900">Email</p>
+                <p className="text-sm text-slate-500">info@triyards.com</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100">
+                <MapPin className="h-5 w-5 text-violet-600" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">Message</label>
-                <textarea rows={4} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-[#4F6BF5]" placeholder="I'm interested in..." />
+                <p className="font-bold text-slate-900">Office</p>
+                <p className="text-sm text-slate-500">Bandra West, Mumbai, Maharashtra 400050</p>
               </div>
-              <Button type="submit" className="w-full">Submit Enquiry</Button>
-            </form>
-          </Card>
-          <div className="space-y-6">
-            <Card className="flex items-start gap-4">
-              <Phone className="mt-1 h-5 w-5 text-[#4F6BF5]" />
-              <div>
-                <p className="font-semibold text-slate-900">Phone</p>
-                <p className="text-slate-500">+91 98765 43210</p>
-              </div>
-            </Card>
-            <Card className="flex items-start gap-4">
-              <Mail className="mt-1 h-5 w-5 text-[#4F6BF5]" />
-              <div>
-                <p className="font-semibold text-slate-900">Email</p>
-                <p className="text-slate-500">info@estatepro.com</p>
-              </div>
-            </Card>
-            <Card className="flex items-start gap-4">
-              <MapPin className="mt-1 h-5 w-5 text-[#4F6BF5]" />
-              <div>
-                <p className="font-semibold text-slate-900">Office</p>
-                <p className="text-slate-500">Bandra West, Mumbai, Maharashtra 400050</p>
-              </div>
-            </Card>
+            </div>
           </div>
         </div>
       </div>

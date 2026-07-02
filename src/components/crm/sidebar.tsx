@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, Users, Contact, CalendarCheck, Calendar,
   UsersRound, Settings, Home, IndianRupee, FolderKanban,
-  UserCog, HardHat, Layers, LogOut, X, type LucideIcon,
+  UserCog, HardHat, Layers, LogOut, X, Rocket, Quote, type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CRM_NAV, CRM_SETTINGS_NAV } from "@/lib/constants";
@@ -13,7 +13,7 @@ import { BRAND_NAME } from "@/lib/website/constants";
 
 const iconMap: Record<string, LucideIcon> = {
   LayoutDashboard, Building2, Users, Contact, CalendarCheck, Calendar,
-  UsersRound, Settings, IndianRupee, FolderKanban, UserCog, HardHat,
+  UsersRound, Settings, IndianRupee, FolderKanban, UserCog, HardHat, Rocket, Quote,
 };
 
 interface SidebarProps {

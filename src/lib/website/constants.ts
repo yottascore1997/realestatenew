@@ -18,8 +18,26 @@ export const HERO_TRUST_ITEMS = [
   { label: "Easy Home Loans", icon: "Landmark" },
 ] as const;
 
-export const TOP_BUILDERS = [
-  "Lodha", "Godrej Properties", "DLF", "Prestige", "Sobha", "Brigade", "Tata Housing", "Mahindra Lifespaces",
+export const BUILDER_LOGOS = [
+  { name: "Lodha", logo: "/builders/lodha.svg" },
+  { name: "Godrej Properties", logo: "/builders/godrej.svg" },
+  { name: "DLF", logo: "/builders/dlf.svg" },
+  { name: "Piramal Realty", logo: "/builders/piramal.svg" },
+  { name: "Prestige Group", logo: "/builders/prestige.svg" },
+  { name: "Tata Housing", logo: "/builders/tata.svg" },
+  { name: "Shapoorji Pallonji", logo: "/builders/shapoorji.svg" },
+  { name: "Raheja Developers", logo: "/builders/raheja.svg" },
+  { name: "Brigade", logo: "/builders/brigade.svg" },
+  { name: "Mahindra Lifespaces", logo: "/builders/mahindra.svg" },
+] as const;
+
+/** @deprecated use BUILDER_LOGOS */
+export const TOP_BUILDERS = BUILDER_LOGOS.map((b) => b.name);
+
+export const BUILDER_PARTNER_STATS = [
+  { label: "Top Builders", value: "100+" },
+  { label: "Projects", value: "500+" },
+  { label: "Cities", value: "50+" },
 ] as const;
 
 export const WHY_CHOOSE = [
@@ -236,9 +254,42 @@ export const WHY_TRIYARDS = [
 ] as const;
 
 export const TESTIMONIALS = [
-  { name: "Rahul & Priya Sharma", city: "Pune", text: "Triyards made our first home purchase seamless. Zero brokerage and excellent legal support throughout.", rating: 5 },
-  { name: "Amit Patel", city: "Ahmedabad", text: "Sold my apartment in 3 weeks through Triyards. Professional team, verified buyers, no middlemen.", rating: 5 },
-  { name: "Neha Reddy", city: "Hyderabad", text: "Home loan + property search + registration — everything handled under one roof. Highly recommend!", rating: 5 },
+  {
+    name: "Rahul & Priya Sharma",
+    role: "Homeowner",
+    city: "Pune",
+    text: "Triyards made our first home purchase seamless. Zero brokerage and excellent legal support throughout.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=12",
+  },
+  {
+    name: "Amit Patel",
+    role: "Investor",
+    city: "Ahmedabad",
+    text: "Sold my apartment in 3 weeks through Triyards. Professional team, verified buyers, no middlemen.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=33",
+  },
+  {
+    name: "Neha Reddy",
+    role: "Homeowner",
+    city: "Hyderabad",
+    text: "Home loan + property search + registration — everything handled under one roof. Highly recommend!",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=47",
+  },
+  {
+    name: "Vikram Singh",
+    role: "Homeowner",
+    city: "Gurgaon",
+    text: "The site visit coordination was flawless. We found our dream 3 BHK within two weeks.",
+    rating: 5,
+    image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=420&fit=crop&q=85",
+    avatar: "https://i.pravatar.cc/120?img=15",
+  },
 ] as const;
 
 export const FAQ_ITEMS = [

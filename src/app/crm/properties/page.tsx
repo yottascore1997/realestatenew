@@ -5,7 +5,7 @@ import {
   Plus, Search, Pencil, Trash2, Bed, Bath, Maximize, Building2, X, Loader2, MapPin,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Select, FilterSelect } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FormSection, FormGrid } from "@/components/ui/form-section";
 import { formatINR, cn } from "@/lib/utils";
@@ -191,14 +191,12 @@ export default function PropertiesPage() {
             className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none focus:border-violet-400 focus:bg-white focus:ring-4 focus:ring-violet-100"
           />
         </div>
-        <select
+        <FilterSelect
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-11 cursor-pointer rounded-xl border border-slate-200 bg-white px-3.5 text-sm font-medium text-slate-600 outline-none focus:border-violet-400"
-        >
-          <option value="">All Status</option>
-          {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
+          placeholder="All Status"
+          options={STATUS_OPTIONS}
+        />
       </div>
 
       {/* Grid */}

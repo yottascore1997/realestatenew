@@ -4,9 +4,11 @@ export const CRM_NAV = [
   { label: "Revenue Management", href: "/crm/finance", icon: "IndianRupee" },
   { label: "Properties", href: "/crm/properties", icon: "Building2" },
   { label: "Projects", href: "/crm/projects", icon: "FolderKanban" },
+  { label: "New Launches", href: "/crm/launches", icon: "Rocket" },
   { label: "Employees", href: "/crm/employees", icon: "Users" },
   { label: "Builders", href: "/crm/builders", icon: "HardHat" },
   { label: "Contacts", href: "/crm/contacts", icon: "Contact" },
+  { label: "Testimonials", href: "/crm/testimonials", icon: "Quote" },
   { label: "Appointments", href: "/crm/appointments", icon: "CalendarCheck" },
   { label: "Calendar", href: "/crm/calendar", icon: "Calendar" },
 ] as const;

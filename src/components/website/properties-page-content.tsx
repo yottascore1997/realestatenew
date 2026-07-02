@@ -4,9 +4,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Search, MapPin, Building2, Wallet, Bed, Bath, Maximize,
-  Heart, LayoutGrid, List, SlidersHorizontal, X, ChevronDown, ArrowRight, Camera,
+  Heart, LayoutGrid, List, SlidersHorizontal, X, ArrowRight, Camera,
 } from "lucide-react";
 import { cn, formatINR } from "@/lib/utils";
+import { HERO_BUDGET_OPTIONS } from "@/lib/website/get-hero-data";
+import { IconSelect, FilterSelect } from "@/components/ui/select";
 
 export type PropertyListing = {
   id: string;
@@ -16,6 +18,7 @@ export type PropertyListing = {
   city: string;
   price: number;
   type: string;
+  status: string;
   bedrooms: number;
   bathrooms: number;
   sqft: number | null;
@@ -177,6 +180,7 @@ function FiltersPanel({
   onApply,
   onReset,
   className,
+  cityOptions = CITIES,
 }: {
   city: string;
   setCity: (v: string) => void;
@@ -191,6 +195,7 @@ function FiltersPanel({
   onApply?: () => void;
   onReset: () => void;
   className?: string;
+  cityOptions?: string[];
 }) {
   const toggleType = (id: string) => {
     setTypes(types.includes(id) ? types.filter((t) => t !== id) : [...types, id]);
@@ -216,18 +221,12 @@ function FiltersPanel({
       <div className="space-y-5">
         <div>
           <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-500">Location</label>
-          <div className="relative">
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="w-full appearance-none rounded-lg border border-slate-200 bg-slate-50/50 py-2.5 pl-3 pr-8 text-sm font-medium text-[#111827] outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100"
-            >
-              {CITIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          </div>
+          <FilterSelect
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            options={cityOptions.map((c) => ({ value: c, label: c }))}
+            className="w-full min-w-0"
+          />
         </div>
 
         <div>
@@ -319,26 +318,50 @@ function FiltersPanel({
 
 type PropertiesPageContentProps = {
   properties: PropertyListing[];
-  initialSearch?: string;
+  cities?: string[];
+  initialFilters?: {
+    search?: string;
+    type?: string;
+    status?: string;
+    budget?: string;
+  };
 };
 
-export function PropertiesPageContent({ properties, initialSearch = "" }: PropertiesPageContentProps) {
-  const [heroCity, setHeroCity] = useState(initialSearch || "All Cities");
-  const [heroType, setHeroType] = useState("Any Type");
-  const [heroPrice, setHeroPrice] = useState(String(PRICE_MAX));
+function budgetToPrices(budget?: string) {
+  const opt = HERO_BUDGET_OPTIONS.find((b) => b.value === budget);
+  if (!opt) return { minPrice: null as number | null, maxPrice: PRICE_MAX };
+  return {
+    minPrice: opt.minPrice,
+    maxPrice: opt.maxPrice ?? PRICE_MAX,
+  };
+}
 
-  const [city, setCity] = useState(initialSearch || "All Cities");
-  const [types, setTypes] = useState<string[]>([]);
-  const [priceMax, setPriceMax] = useState(PRICE_MAX);
+export function PropertiesPageContent({ properties, cities = [], initialFilters = {} }: PropertiesPageContentProps) {
+  const cityOptions = ["All Cities", ...(cities.length > 0 ? cities : CITIES.slice(1))];
+  const initialCity = initialFilters.search || "All Cities";
+  const initialTypes = initialFilters.type ? [initialFilters.type] : [];
+  const { minPrice: initMin, maxPrice: initMax } = budgetToPrices(initialFilters.budget);
+
+  const [heroCity, setHeroCity] = useState(initialCity === "All Cities" ? "All Cities" : initialCity);
+  const [heroType, setHeroType] = useState(initialFilters.type || "Any Type");
+  const [heroPrice, setHeroPrice] = useState(initialFilters.budget ?? "");
+
+  const [city, setCity] = useState(initialCity);
+  const [types, setTypes] = useState<string[]>(initialTypes);
+  const [priceMax, setPriceMax] = useState(initMax);
+  const [priceMin, setPriceMin] = useState(initMin ?? 0);
+  const [statusFilter, setStatusFilter] = useState(initialFilters.status || "");
   const [bhk, setBhk] = useState<number | null>(null);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [sort, setSort] = useState("newest");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [applied, setApplied] = useState({
-    city: initialSearch || "All Cities",
-    types: [] as string[],
-    priceMax: PRICE_MAX,
+    city: initialCity,
+    types: initialTypes,
+    priceMin: initMin ?? 0,
+    priceMax: initMax,
+    status: initialFilters.status || "",
     bhk: null as number | null,
     amenities: [] as string[],
   });
@@ -347,23 +370,31 @@ export function PropertiesPageContent({ properties, initialSearch = "" }: Proper
     setCity("All Cities");
     setTypes([]);
     setPriceMax(PRICE_MAX);
+    setPriceMin(0);
+    setStatusFilter("");
     setBhk(null);
     setAmenities([]);
-    setApplied({ city: "All Cities", types: [], priceMax: PRICE_MAX, bhk: null, amenities: [] });
+    setApplied({ city: "All Cities", types: [], priceMin: 0, priceMax: PRICE_MAX, status: "", bhk: null, amenities: [] });
   };
 
   const applyFilters = () => {
-    setApplied({ city, types, priceMax, bhk, amenities });
+    setApplied({ city, types, priceMin, priceMax, status: statusFilter, bhk, amenities });
     setFiltersOpen(false);
   };
 
   const runHeroSearch = () => {
     setCity(heroCity);
-    setPriceMax(Number(heroPrice));
+    const budgetOpt = HERO_BUDGET_OPTIONS.find((b) => b.value === heroPrice);
+    const maxP = budgetOpt?.maxPrice ?? PRICE_MAX;
+    const minP = budgetOpt?.minPrice ?? 0;
+    setPriceMax(maxP);
+    setPriceMin(minP);
     setApplied({
       city: heroCity,
       types: heroType === "Any Type" ? [] : [heroType],
-      priceMax: Number(heroPrice),
+      priceMin: minP,
+      priceMax: maxP,
+      status: statusFilter,
       bhk,
       amenities,
     });
@@ -379,7 +410,10 @@ export function PropertiesPageContent({ properties, initialSearch = "" }: Proper
     if (applied.types.length > 0) {
       list = list.filter((p) => applied.types.includes(p.type));
     }
-    list = list.filter((p) => p.price <= applied.priceMax);
+    if (applied.status) {
+      list = list.filter((p) => p.status === applied.status);
+    }
+    list = list.filter((p) => p.price >= applied.priceMin && p.price <= applied.priceMax);
     if (applied.bhk !== null) {
       list = list.filter((p) => (applied.bhk === 4 ? p.bedrooms >= 4 : p.bedrooms === applied.bhk));
     }
@@ -424,48 +458,37 @@ export function PropertiesPageContent({ properties, initialSearch = "" }: Proper
 
           <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-white/20 bg-white/95 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)] backdrop-blur-sm sm:p-4">
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="relative sm:col-span-1">
-                <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-violet-500" />
-                <select
-                  value={heroCity}
-                  onChange={(e) => setHeroCity(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/80 py-3 pl-9 pr-8 text-sm font-medium outline-none focus:border-violet-300"
-                >
-                  {CITIES.map((c) => (
-                    <option key={c} value={c}>{c === "All Cities" ? "Select City" : c}</option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              </div>
-              <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-violet-500" />
-                <select
-                  value={heroType}
-                  onChange={(e) => setHeroType(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/80 py-3 pl-9 pr-8 text-sm font-medium outline-none focus:border-violet-300"
-                >
-                  <option value="Any Type">Any Type</option>
-                  {PROPERTY_TYPES.map(({ id, label }) => (
-                    <option key={id} value={id}>{label}</option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              </div>
-              <div className="relative">
-                <Wallet className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-violet-500" />
-                <select
-                  value={heroPrice}
-                  onChange={(e) => setHeroPrice(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50/80 py-3 pl-9 pr-8 text-sm font-medium outline-none focus:border-violet-300"
-                >
-                  <option value={String(PRICE_MAX)}>₹ 20 Lakh – ₹ 10 Cr+</option>
-                  <option value="5000000">Up to ₹ 50 Lakh</option>
-                  <option value="10000000">Up to ₹ 1 Cr</option>
-                  <option value="25000000">Up to ₹ 2.5 Cr</option>
-                  <option value="50000000">Up to ₹ 5 Cr</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              </div>
+              <IconSelect
+                icon={<MapPin className="h-4 w-4 shrink-0 text-violet-500" strokeWidth={1.75} />}
+                value={heroCity}
+                onChange={(e) => setHeroCity(e.target.value)}
+                shellClassName="sm:col-span-1"
+              >
+                {cityOptions.map((c) => (
+                  <option key={c} value={c}>{c === "All Cities" ? "Select City" : c}</option>
+                ))}
+              </IconSelect>
+              <IconSelect
+                icon={<Building2 className="h-4 w-4 shrink-0 text-violet-500" strokeWidth={1.75} />}
+                value={heroType}
+                onChange={(e) => setHeroType(e.target.value)}
+              >
+                <option value="Any Type">Any Type</option>
+                {PROPERTY_TYPES.map(({ id, label }) => (
+                  <option key={id} value={id}>{label}</option>
+                ))}
+              </IconSelect>
+              <IconSelect
+                icon={<Wallet className="h-4 w-4 shrink-0 text-violet-500" strokeWidth={1.75} />}
+                value={heroPrice}
+                onChange={(e) => setHeroPrice(e.target.value)}
+              >
+                {HERO_BUDGET_OPTIONS.map((opt) => (
+                  <option key={opt.value || "any"} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </IconSelect>
               <button
                 type="button"
                 onClick={runHeroSearch}
@@ -498,6 +521,7 @@ export function PropertiesPageContent({ properties, initialSearch = "" }: Proper
                 setAmenities={setAmenities}
                 onApply={applyFilters}
                 onReset={resetFilters}
+                cityOptions={cityOptions}
               />
             </div>
           </aside>
@@ -519,18 +543,12 @@ export function PropertiesPageContent({ properties, initialSearch = "" }: Proper
                 </p>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="relative">
-                  <select
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value)}
-                    className="appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-700 shadow-sm sm:text-sm"
-                  >
-                    {SORT_OPTIONS.map((o) => (
-                      <option key={o.id} value={o.id}>Sort by: {o.label}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
-                </div>
+                <FilterSelect
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  options={SORT_OPTIONS.map((o) => ({ value: o.id, label: `Sort by: ${o.label}` }))}
+                  className="min-w-[168px] py-2 text-xs sm:text-sm"
+                />
                 <div className="flex rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
                   <button
                     type="button"
@@ -621,6 +639,7 @@ export function PropertiesPageContent({ properties, initialSearch = "" }: Proper
               setAmenities={setAmenities}
               onApply={applyFilters}
               onReset={resetFilters}
+              cityOptions={cityOptions}
               className="border-0 p-0 shadow-none"
             />
           </div>

@@ -475,6 +475,28 @@ body {
     radial-gradient(at 60% 80%, rgba(251, 191, 36, 0.04) 0%, transparent 40%);
 }
 
+/* Shared cream + navy + gold backdrop for Achievement & Testimonials */
+.premium-trust-bg {
+  background-color: #faf8f5;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(201, 169, 98, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 75%, rgba(16, 44, 87, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(201, 169, 98, 0.04) 0%, transparent 45%);
+}
+
+@keyframes builder-logo-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.builder-logo-marquee {
+  animation: builder-logo-marquee 32s linear infinite;
+}
+
+.builder-logo-marquee:hover {
+  animation-play-state: paused;
+}
+
 .premium-eyebrow {
   @apply font-sans text-[11px] font-semibold tracking-wide inline-flex items-center gap-2 text-amber-600;
 }
@@ -538,6 +560,50 @@ body {
 
 .website-theme :where(p, li, label, input, select, textarea) {
   @apply font-sans tracking-wide;
+}
+
+/* Premium native select — dropdown list styling (browser-dependent) */
+select,
+.premium-select-shell select {
+  color-scheme: light;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #111827;
+  font-weight: 500;
+  padding: 0.625rem 0.75rem;
+}
+
+select option:checked,
+select option:hover {
+  background: linear-gradient(0deg, #f5f3ff 0%, #ede9fe 100%);
+  color: #5b21b6;
+}
+
+.premium-select-shell {
+  position: relative;
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(226 232 240 / 0.9);
+  background: linear-gradient(to bottom, #ffffff, rgb(248 250 252 / 0.8));
+  padding: 0 0.875rem;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.premium-select-shell:hover {
+  border-color: rgb(196 181 253);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.1);
+}
+
+.premium-select-shell:focus-within {
+  border-color: rgb(139 92 246);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgb(139 92 246 / 0.12);
 }
 
 .website-theme .font-serif,
