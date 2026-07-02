@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import {
-  Plus, Search, Pencil, Trash2, Star, X, Loader2, MapPin, Quote,
+  Plus, Search, Star, X, Loader2, MapPin, Quote,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";

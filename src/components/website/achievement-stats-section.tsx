@@ -44,9 +44,16 @@ function SkylineSilhouette() {
 
 export function AchievementStatsSection() {
   return (
-    <section className="premium-trust-bg py-8 sm:py-10">
+    <section className="py-8 sm:py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-[#e8dcc8]/60 bg-[#fffcf8] p-5 shadow-[0_20px_60px_rgba(12,35,64,0.07)] sm:p-7 lg:p-9">
+        <div className="relative overflow-hidden rounded-3xl border border-[#e8dcc8]/60 p-5 shadow-[0_20px_60px_rgba(12,35,64,0.07)] sm:p-7 lg:p-9">
+          {/* Background image — no overlay layer */}
+          <img
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=500&fit=crop&q=80"
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-right"
+          />
+
           {/* Decorative dots */}
           <div
             className="pointer-events-none absolute left-5 top-5 hidden h-16 w-16 opacity-40 sm:block"
@@ -56,23 +63,14 @@ export function AchievementStatsSection() {
             }}
           />
 
-          {/* Skyline fade — top right */}
-          <div className="pointer-events-none absolute right-0 top-0 h-40 w-[min(55%,420px)] overflow-hidden opacity-30 sm:h-48 sm:opacity-40">
-            <img
-              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=400&fit=crop&q=80"
-              alt=""
-              className="h-full w-full object-cover object-center [mask-image:linear-gradient(to_left,black,transparent)]"
-            />
-          </div>
-
-          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-10">
+          <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-10">
             {/* Left copy */}
             <motion.div
               initial={{ opacity: 0, x: -16 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55 }}
-              className="relative lg:w-[34%] lg:shrink-0"
+              className="relative rounded-2xl bg-white/90 p-4 backdrop-blur-[2px] sm:p-5 lg:w-[34%] lg:shrink-0"
             >
               <div className="pointer-events-none absolute -left-2 top-1 h-full w-1 rounded-full bg-gradient-to-b from-orange-400 via-violet-400/40 to-transparent opacity-80 sm:-left-3" />
 
@@ -146,7 +144,7 @@ export function AchievementStatsSection() {
                         className="relative z-10 mx-0 hidden w-3 shrink-0 items-center justify-center sm:flex lg:w-4"
                         aria-hidden
                       >
-                        <div className="h-2.5 w-2.5 rotate-45 border border-[#e8dcc8] bg-[#fffcf8] shadow-sm" />
+                        <div className="h-2.5 w-2.5 rotate-45 border border-[#e8dcc8] bg-white shadow-sm" />
                       </div>
                     )}
                   </div>
