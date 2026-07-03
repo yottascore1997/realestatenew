@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Layers, Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
 import { useState } from "react";
 import { WEBSITE_NAV, WEBSITE_NAV_MORE, BRAND_PHONE } from "@/lib/website/constants";
-import { BrandWordmark } from "@/components/website/brand-wordmark";
+import { BrandLogo } from "@/components/website/brand-logo";
 import { ContactTrigger } from "@/components/website/contact-trigger";
 import type { HeroSearchData } from "@/lib/website/get-hero-data";
 
@@ -30,12 +30,7 @@ export function Navbar({ stats }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:h-16 sm:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a2744]">
-            <Layers className="h-4 w-4 text-amber-400" />
-          </span>
-          <BrandWordmark className="text-[#1a2744]" />
-        </Link>
+        <BrandLogo href="/" height={40} priority />
 
         <nav className="hidden items-center gap-5 xl:flex">
           {WEBSITE_NAV.map((item) => {

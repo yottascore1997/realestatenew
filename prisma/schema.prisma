@@ -18,7 +18,9 @@ enum LeadPipelineStatus {
   ASSIGNED
   CONTACTED
   INTERESTED
+  NOT_INTERESTED
   FOLLOW_UP
+  VC_SCHEDULED
   SITE_VISIT_SCHEDULED
   SITE_VISIT_DONE
   NEGOTIATION
@@ -72,6 +74,7 @@ enum FollowUpType {
   WHATSAPP
   MEETING
   SITE_VISIT
+  VC
 }
 
 enum SiteVisitStatus {
@@ -101,6 +104,10 @@ enum DocumentType {
   AADHAR
   CHEQUE
   BOOKING_FORM
+  SALARY_SLIP
+  BANK_STATEMENT
+  PASSPORT_PHOTO
+  RECEIPT
   PDF
   IMAGE
   OTHER
@@ -314,6 +321,7 @@ model Property {
 
 model Lead {
   id                String              @id @default(cuid())
+  leadCode          String?             @unique
   fullName          String
   mobile            String
   alternateMobile   String?
@@ -341,8 +349,14 @@ model Lead {
   lostReason        String?
   bookingAmount     Decimal?            @db.Decimal(15, 2)
   paymentStatus     String?
+  profileMeta       Json?
   nextFollowUpDate  DateTime?
   nextFollowUpTime  String?
+  vcScheduledDate   DateTime?
+  vcScheduledTime   String?
+  trackingProject   String?
+  trackingLocation  String?
+  lastStatusRemark  String?             @db.Text
   reminderMinutes   Int?                @default(30)
   agentId           String?
   contactId         String?             @unique
@@ -377,6 +391,8 @@ model FollowUp {
   scheduledTime   String?
   type            FollowUpType @default(CALL)
   notes           String?      @db.Text
+  projectId       String?
+  location        String?
   reminderMinutes Int          @default(30)
   completed       Boolean      @default(false)
   completedAt     DateTime?
@@ -403,29 +419,35 @@ model LeadActivity {
 }
 
 model CallNote {
-  id        String   @id @default(cuid())
-  leadId    String
-  content   String   @db.Text
-  duration  Int?
-  outcome   String?
-  agentId   String?
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  leadId     String
+  content    String   @db.Text
+  discussion String?  @db.Text
+  duration   Int?
+  connected  Boolean  @default(true)
+  outcome    String?
+  agentId    String?
+  createdAt  DateTime @default(now())
 
   lead  Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
   agent User? @relation(fields: [agentId], references: [id], onDelete: SetNull)
 }
 
 model SiteVisit {
-  id         String          @id @default(cuid())
-  leadId     String
-  projectId  String?
-  visitDate  DateTime
-  visitTime  String?
-  status     SiteVisitStatus @default(SCHEDULED)
-  feedback   String?         @db.Text
-  executiveId String?
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
+  id             String          @id @default(cuid())
+  leadId         String
+  projectId      String?
+  visitDate      DateTime
+  visitTime      String?
+  status         SiteVisitStatus @default(SCHEDULED)
+  flatNumber     String?
+  rating         Int?
+  likedPoints    Json?
+  dislikedPoints Json?
+  feedback       String?         @db.Text
+  executiveId    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
   project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)

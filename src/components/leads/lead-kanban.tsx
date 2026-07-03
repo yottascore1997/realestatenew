@@ -9,15 +9,21 @@ import { cn } from "@/lib/utils";
 
 interface LeadKanbanProps {
   columns: Record<string, Lead[]>;
-  onStatusChange?: (leadId: string, status: string) => void;
+  onStatusChangeRequest?: (leadId: string, status: string, lead: Lead) => void;
 }
 
-export function LeadKanban({ columns, onStatusChange }: LeadKanbanProps) {
+export function LeadKanban({ columns, onStatusChangeRequest }: LeadKanbanProps) {
   const [dragging, setDragging] = useState<string | null>(null);
   const [over, setOver] = useState<string | null>(null);
 
   const handleDrop = (status: string) => {
-    if (dragging && onStatusChange) onStatusChange(dragging, status);
+    if (!dragging || !onStatusChangeRequest) {
+      setDragging(null);
+      setOver(null);
+      return;
+    }
+    const lead = Object.values(columns).flat().find((l) => l.id === dragging);
+    if (lead && lead.status !== status) onStatusChangeRequest(lead.id, status, lead);
     setDragging(null);
     setOver(null);
   };
@@ -66,7 +72,7 @@ export function LeadKanban({ columns, onStatusChange }: LeadKanbanProps) {
                     <div className="flex items-start justify-between gap-2">
                       <Link href={`/crm/leads/${lead.id}`} className="min-w-0 flex-1">
                         <p className="truncate font-semibold text-slate-900 transition-colors group-hover:text-violet-700">{lead.fullName}</p>
-                        <p className="text-xs text-slate-500">{lead.mobile}</p>
+                        <p className="text-[10px] text-slate-400">Contact on profile</p>
                       </Link>
                       <div className="flex shrink-0 items-center gap-1 text-xs">
                         <span title="Priority">{priority.icon}</span>
@@ -77,19 +83,24 @@ export function LeadKanban({ columns, onStatusChange }: LeadKanbanProps) {
                     {lead.budget && (
                       <span className="mt-2 inline-flex rounded-md bg-violet-50 px-2 py-0.5 text-xs font-bold text-violet-700">{lead.budget}</span>
                     )}
-                    {lead.projectName && <p className="mt-1.5 truncate text-xs text-slate-400">{lead.projectName}</p>}
+                    {(lead.trackingProject || lead.projectName) && (
+                      <p className="mt-1.5 truncate text-xs text-slate-400">
+                        {lead.trackingProject || lead.projectName}
+                        {(lead.trackingLocation || lead.preferredLocation) && ` · ${lead.trackingLocation || lead.preferredLocation}`}
+                      </p>
+                    )}
 
                     <div className="mt-2.5 flex items-center justify-between border-t border-slate-100 pt-2.5">
                       <span className="truncate text-[11px] font-medium text-slate-400">
                         {lead.agentName ? `👤 ${lead.agentName}` : "Unassigned"}
                       </span>
                       <div className="flex gap-1">
-                        <a href={`tel:${lead.mobile}`} className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+                        <Link href={`/crm/leads/${lead.id}`} title="View profile & contact" className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
                           <Phone className="h-3.5 w-3.5" />
-                        </a>
-                        <a href={`https://wa.me/91${lead.mobile}`} target="_blank" rel="noreferrer" className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-green-100 hover:text-green-600">
+                        </Link>
+                        <Link href={`/crm/leads/${lead.id}`} title="WhatsApp from profile" className="grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-green-100 hover:text-green-600">
                           <MessageCircle className="h-3.5 w-3.5" />
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>

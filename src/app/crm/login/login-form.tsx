@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Layers, Mail, Lock, Loader2, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Loader2, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { BRAND_NAME } from "@/lib/website/constants";
+import { BrandLogo } from "@/components/website/brand-logo";
 import { LoginShowcase } from "./login-showcase";
 
 export function CrmLoginForm() {
@@ -65,15 +65,13 @@ export function CrmLoginForm() {
           <div className="w-full max-w-[420px]">
             {/* Mobile brand + tagline */}
             <div className="mb-6 text-center lg:hidden">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-300/40">
-                <Layers className="h-6 w-6 text-white" />
-              </div>
-              <h2 className="text-xl font-extrabold text-white">{BRAND_NAME} CRM</h2>
-              <p className="mt-1 text-sm text-white/70">Secure team access</p>
+              <BrandLogo href={null} height={56} className="mx-auto" />
+              <p className="mt-2 text-sm text-white/70">Secure team access</p>
             </div>
 
             {/* Desktop heading */}
             <div className="mb-7 hidden lg:block">
+              <BrandLogo href="/" height={48} className="mb-4" />
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-600">Welcome back</p>
               <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">Sign in to CRM</h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">

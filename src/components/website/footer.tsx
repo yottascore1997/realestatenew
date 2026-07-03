@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Layers, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { BRAND_PHONE, BRAND_EMAIL } from "@/lib/website/constants";
+import { BrandLogo } from "@/components/website/brand-logo";
 import { BrandWordmark } from "@/components/website/brand-wordmark";
 
 const SOCIAL = ["Facebook", "Instagram", "LinkedIn", "YouTube"];
@@ -14,11 +15,8 @@ export function Footer() {
       <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-14">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-theme-purple shadow-theme-purple">
-                <Layers className="h-5 w-5 text-white" />
-              </div>
-              <BrandWordmark />
+            <div className="mb-5">
+              <BrandLogo href="/" height={52} />
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-white/50">
               India&apos;s premium real estate platform — verified listings, trusted builders, zero brokerage.

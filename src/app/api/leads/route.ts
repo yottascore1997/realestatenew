@@ -16,6 +16,8 @@ export async function GET(request: NextRequest) {
   const location = searchParams.get("location") ?? undefined;
   const dashboard = searchParams.get("dashboard");
 
+  const quickFilter = searchParams.get("quickFilter") ?? undefined;
+
   if (dashboard === "true") {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -48,12 +50,15 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") ?? "0", 10);
   const paginate = page > 0 && limit > 0;
 
+  const quickWhere = quickFilter ? buildQuickFilterWhere(quickFilter) : {};
+
   const where = {
-    ...(status && { status: status as never }),
+    ...quickWhere,
+    ...(status && !quickFilter && { status: status as never }),
     ...(source && { source: source as never }),
     ...(agentId && { agentId }),
     ...(priority && { priority: priority as never }),
-    ...(temperature && { temperature: temperature as never }),
+    ...(temperature && !quickFilter && { temperature: temperature as never }),
     AND: [
       ...(search ? [{
         OR: [
@@ -148,6 +153,36 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json(serializeLead(lead), { status: 201 });
+}
+
+function buildQuickFilterWhere(quickFilter: string) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const closedStatuses = ["BOOKED", "LOST", "NOT_INTERESTED"] as const;
+
+  switch (quickFilter) {
+    case "hot":
+      return { temperature: "HOT" as const, status: { notIn: [...closedStatuses] } };
+    case "follow_up_due":
+      return {
+        status: { notIn: [...closedStatuses] },
+        OR: [
+          { nextFollowUpDate: { gte: today, lt: tomorrow } },
+          { nextFollowUpDate: { lt: today } },
+        ],
+      };
+    case "booked":
+      return { status: "BOOKED" as const };
+    case "booked_month":
+      return { status: "BOOKED" as const, updatedAt: { gte: monthStart } };
+    case "today":
+      return { createdAt: { gte: today, lt: tomorrow } };
+    default:
+      return {};
+  }
 }
 
 function serializeLead(lead: Record<string, unknown>) {

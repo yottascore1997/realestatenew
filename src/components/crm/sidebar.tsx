@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, Users, Contact, CalendarCheck, Calendar,
   UsersRound, Settings, Home, IndianRupee, FolderKanban,
-  UserCog, HardHat, Layers, LogOut, X, Rocket, Quote, type LucideIcon,
+  UserCog, HardHat, LogOut, X, Rocket, Quote, type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CRM_NAV, CRM_SETTINGS_NAV } from "@/lib/constants";
-import { BRAND_NAME } from "@/lib/website/constants";
+import { BrandLogo } from "@/components/website/brand-logo";
 
 const iconMap: Record<string, LucideIcon> = {
   LayoutDashboard, Building2, Users, Contact, CalendarCheck, Calendar,
@@ -66,14 +66,9 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <div className="relative overflow-hidden border-b border-white/10 px-5 py-5">
           <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-violet-600/20 blur-2xl" />
           <div className="relative flex items-center justify-between gap-3">
-            <Link href="/crm" className="flex min-w-0 flex-1 items-center gap-3" onClick={onClose}>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-900/40">
-                <Layers className="h-5 w-5 text-white" />
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold leading-tight">{BRAND_NAME}</p>
-                <p className="text-[10px] font-medium text-violet-300/70">Real Estate CRM</p>
-              </div>
+            <Link href="/crm" className="flex min-w-0 flex-1 flex-col items-start gap-1" onClick={onClose}>
+              <BrandLogo href={null} height={44} />
+              <p className="text-[10px] font-medium text-violet-300/70">Real Estate CRM</p>
             </Link>
             <button
               type="button"

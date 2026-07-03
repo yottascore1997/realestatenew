@@ -29,6 +29,11 @@ export interface Lead {
   bookingAmount?: number | null;
   nextFollowUpDate?: string | null;
   nextFollowUpTime?: string | null;
+  vcScheduledDate?: string | null;
+  vcScheduledTime?: string | null;
+  trackingProject?: string | null;
+  trackingLocation?: string | null;
+  lastStatusRemark?: string | null;
   reminderMinutes?: number | null;
   agentId?: string | null;
   agentName?: string | null;

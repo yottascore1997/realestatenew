@@ -3,7 +3,9 @@ export const LEAD_PIPELINE = [
   { key: "ASSIGNED", label: "Assigned", color: "bg-indigo-500", textColor: "text-indigo-700", bgLight: "bg-indigo-50", border: "border-indigo-200" },
   { key: "CONTACTED", label: "Contacted", color: "bg-cyan-500", textColor: "text-cyan-700", bgLight: "bg-cyan-50", border: "border-cyan-200" },
   { key: "INTERESTED", label: "Interested", color: "bg-violet-500", textColor: "text-violet-700", bgLight: "bg-violet-50", border: "border-violet-200" },
+  { key: "NOT_INTERESTED", label: "Not Interested", color: "bg-slate-500", textColor: "text-slate-700", bgLight: "bg-slate-100", border: "border-slate-300" },
   { key: "FOLLOW_UP", label: "Follow-up", color: "bg-amber-500", textColor: "text-amber-700", bgLight: "bg-amber-50", border: "border-amber-200" },
+  { key: "VC_SCHEDULED", label: "VC Scheduled", color: "bg-sky-500", textColor: "text-sky-700", bgLight: "bg-sky-50", border: "border-sky-200" },
   { key: "SITE_VISIT_SCHEDULED", label: "Visit Scheduled", color: "bg-orange-500", textColor: "text-orange-700", bgLight: "bg-orange-50", border: "border-orange-200" },
   { key: "SITE_VISIT_DONE", label: "Visit Done", color: "bg-teal-500", textColor: "text-teal-700", bgLight: "bg-teal-50", border: "border-teal-200" },
   { key: "NEGOTIATION", label: "Negotiation", color: "bg-purple-500", textColor: "text-purple-700", bgLight: "bg-purple-50", border: "border-purple-200" },
@@ -14,7 +16,9 @@ export const LEAD_PIPELINE = [
 export const KANBAN_COLUMNS = [
   { key: "NEW", label: "New" },
   { key: "INTERESTED", label: "Interested" },
+  { key: "NOT_INTERESTED", label: "Not Interested" },
   { key: "FOLLOW_UP", label: "Follow-up" },
+  { key: "VC_SCHEDULED", label: "VC" },
   { key: "SITE_VISIT_SCHEDULED", label: "Visit" },
   { key: "NEGOTIATION", label: "Negotiation" },
   { key: "BOOKED", label: "Booked" },
@@ -67,6 +71,7 @@ export const FOLLOW_UP_TYPES = [
   { key: "WHATSAPP", label: "WhatsApp" },
   { key: "MEETING", label: "Meeting" },
   { key: "SITE_VISIT", label: "Site Visit" },
+  { key: "VC", label: "Video Call (VC)" },
 ] as const;
 
 export const LEAD_TAGS = [

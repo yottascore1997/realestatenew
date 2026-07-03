@@ -1,4 +1,5 @@
 export const BRAND_NAME = "Triyards";
+export const BRAND_LOGO = "/images/logo.png";
 
 export const WEBSITE_NAV = [
   { label: "Buy", href: "/properties" },

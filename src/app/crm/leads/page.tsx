@@ -2,13 +2,15 @@
 
 import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Plus, LayoutList, Columns3, Upload, Search, Download } from "lucide-react";
-import { LeadDashboardStats } from "@/components/leads/lead-dashboard-stats";
+import { Plus, LayoutList, Columns3, Upload, Search, Download, X } from "lucide-react";
+import { LeadDashboardStats, STAT_FILTER_LABELS, type LeadStatFilter } from "@/components/leads/lead-dashboard-stats";
 import { LeadTable } from "@/components/leads/lead-table";
 import { LeadKanban } from "@/components/leads/lead-kanban";
+import { LeadRemindersBanner } from "@/components/leads/lead-reminders-banner";
+import { LeadStatusModal, type StatusUpdatePayload } from "@/components/leads/lead-status-modal";
 import { LeadImportModal } from "@/components/leads/lead-import-modal";
 import { CitySelect } from "@/components/leads/city-select";
-import { LEAD_PIPELINE, LEAD_SOURCES } from "@/lib/leads/constants";
+import { LEAD_PIPELINE, LEAD_SOURCES, KANBAN_COLUMNS } from "@/lib/leads/constants";
 import { cn } from "@/lib/utils";
 import type { Lead } from "@/lib/leads/types";
 import type { LeadDashboardStats as StatsType } from "@/lib/leads/types";
@@ -21,6 +23,7 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [sourceFilter, setSourceFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
+  const [quickFilter, setQuickFilter] = useState<LeadStatFilter | null>(null);
   const [page, setPage] = useState(1);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [total, setTotal] = useState(0);
@@ -29,6 +32,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [importOpen, setImportOpen] = useState(false);
+  const [statusModal, setStatusModal] = useState<{ leadId: string; status: string; lead: Lead } | null>(null);
 
   const loadLeads = useCallback(() => {
     const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
@@ -36,11 +40,12 @@ export default function LeadsPage() {
     if (statusFilter) params.set("status", statusFilter);
     if (sourceFilter) params.set("source", sourceFilter);
     if (locationFilter) params.set("location", locationFilter);
+    if (quickFilter && quickFilter !== "all") params.set("quickFilter", quickFilter);
     return fetch(`/api/leads?${params}`).then((r) => {
       if (!r.ok) throw new Error("Failed to load leads");
       return r.json();
     });
-  }, [page, search, statusFilter, sourceFilter, locationFilter]);
+  }, [page, search, statusFilter, sourceFilter, locationFilter, quickFilter]);
 
   const refresh = useCallback(() => {
     setLoading(true);
@@ -60,12 +65,20 @@ export default function LeadsPage() {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  useEffect(() => { setPage(1); }, [search, statusFilter, sourceFilter, locationFilter]);
+  useEffect(() => { setPage(1); }, [search, statusFilter, sourceFilter, locationFilter, quickFilter]);
+
+  const handleQuickFilterChange = (filter: LeadStatFilter | null) => {
+    setQuickFilter(filter);
+    if (filter) {
+      setStatusFilter("");
+      setView("list");
+    }
+  };
 
   const kanbanData = useMemo(() => {
     const columns: Record<string, Lead[]> = {};
-    ["NEW", "INTERESTED", "FOLLOW_UP", "SITE_VISIT_SCHEDULED", "NEGOTIATION", "BOOKED", "LOST"].forEach((s) => {
-      columns[s] = leads.filter((l) => l.status === s);
+    KANBAN_COLUMNS.forEach((s) => {
+      columns[s.key] = leads.filter((l) => l.status === s.key);
     });
     return columns;
   }, [leads]);
@@ -78,19 +91,63 @@ export default function LeadsPage() {
     });
   };
 
-  const handleStatusChange = async (leadId: string, status: string) => {
-    setLeads((prev) => prev.map((l) => l.id === leadId ? { ...l, status } : l));
-    await patchLead(leadId, { status });
+  const handleStatusChangeRequest = (leadId: string, status: string, lead: Lead) => {
+    if (status === lead.status) return;
+    setStatusModal({ leadId, status, lead });
   };
 
-  const handleKanbanDrop = async (leadId: string, status: string) => {
-    await handleStatusChange(leadId, status);
+  const handleStatusSave = async (payload: StatusUpdatePayload) => {
+    if (!statusModal) return;
+    const { leadId } = statusModal;
+    const body: Record<string, unknown> = {
+      status: payload.status,
+      lastStatusRemark: payload.remark || null,
+      trackingProject: payload.trackingProject || null,
+      trackingLocation: payload.trackingLocation || null,
+    };
+    if (payload.remark) body.notes = payload.remark;
+    if (payload.status === "VC_SCHEDULED" && payload.vcScheduledDate) {
+      body.vcScheduledDate = new Date(payload.vcScheduledDate).toISOString();
+      body.vcScheduledTime = payload.vcScheduledTime;
+    }
+    setLeads((prev) => prev.map((l) => l.id === leadId ? {
+      ...l,
+      status: payload.status,
+      lastStatusRemark: payload.remark,
+      trackingProject: payload.trackingProject,
+      trackingLocation: payload.trackingLocation,
+      notes: payload.remark || l.notes,
+      vcScheduledDate: body.vcScheduledDate as string | undefined,
+      vcScheduledTime: payload.vcScheduledTime,
+    } : l));
+    setStatusModal(null);
+    await patchLead(leadId, body);
   };
 
-  const handleFollowUpChange = async (leadId: string, date: string) => {
+  const handleKanbanDrop = (leadId: string, status: string, lead: Lead) => {
+    handleStatusChangeRequest(leadId, status, lead);
+  };
+
+  const handleFollowUpChange = async (leadId: string, date: string, time?: string) => {
     const iso = date ? new Date(date).toISOString() : null;
-    setLeads((prev) => prev.map((l) => l.id === leadId ? { ...l, nextFollowUpDate: iso } : l));
-    await patchLead(leadId, { nextFollowUpDate: iso });
+    setLeads((prev) => prev.map((l) => l.id === leadId ? {
+      ...l,
+      nextFollowUpDate: iso,
+      nextFollowUpTime: time ?? l.nextFollowUpTime,
+    } : l));
+    await patchLead(leadId, {
+      nextFollowUpDate: iso,
+      ...(time !== undefined ? { nextFollowUpTime: time || null } : {}),
+    });
+  };
+
+  const handleTrackingChange = async (leadId: string, project: string, location: string) => {
+    setLeads((prev) => prev.map((l) => l.id === leadId ? {
+      ...l,
+      trackingProject: project,
+      trackingLocation: location,
+    } : l));
+    await patchLead(leadId, { trackingProject: project || null, trackingLocation: location || null });
   };
 
   const handleRemarkSave = async (leadId: string, notes: string) => {
@@ -185,7 +242,31 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {stats && <LeadDashboardStats stats={stats} />}
+      {stats && (
+        <LeadDashboardStats
+          stats={stats}
+          activeFilter={quickFilter}
+          onFilterChange={handleQuickFilterChange}
+        />
+      )}
+
+      {quickFilter && (
+        <div className="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-sm">
+          <span className="font-medium text-violet-800">
+            Showing: <span className="font-bold">{STAT_FILTER_LABELS[quickFilter]}</span>
+            <span className="ml-1 tabular-nums text-violet-600">({total})</span>
+          </span>
+          <button
+            type="button"
+            onClick={() => setQuickFilter(null)}
+            className="ml-auto flex items-center gap-1 rounded-lg bg-white px-2 py-1 text-xs font-semibold text-violet-700 shadow-sm hover:bg-violet-100"
+          >
+            <X className="h-3 w-3" /> Clear
+          </button>
+        </div>
+      )}
+
+      <LeadRemindersBanner />
 
       <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 crm-card">
         <div className="relative min-w-[220px] flex-1">
@@ -215,15 +296,28 @@ export default function LeadsPage() {
           totalPages={totalPages}
           total={total}
           onPageChange={setPage}
-          onStatusChange={handleStatusChange}
+          onStatusChangeRequest={handleStatusChangeRequest}
           onFollowUpChange={handleFollowUpChange}
           onRemarkSave={handleRemarkSave}
+          onTrackingChange={handleTrackingChange}
         />
       ) : (
-        <LeadKanban columns={kanbanData} onStatusChange={handleKanbanDrop} />
+        <LeadKanban columns={kanbanData} onStatusChangeRequest={handleKanbanDrop} />
       )}
 
       <LeadImportModal open={importOpen} onClose={() => setImportOpen(false)} onImported={refresh} />
+
+      {statusModal && (
+        <LeadStatusModal
+          open
+          leadName={statusModal.lead.fullName}
+          status={statusModal.status}
+          initialProject={statusModal.lead.trackingProject || statusModal.lead.projectName || ""}
+          initialLocation={statusModal.lead.trackingLocation || statusModal.lead.preferredLocation || statusModal.lead.city || ""}
+          onClose={() => setStatusModal(null)}
+          onSave={handleStatusSave}
+        />
+      )}
     </div>
   );
 }

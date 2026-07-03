@@ -9,7 +9,7 @@ import {
   Phone, ShieldCheck, Award, BadgeCheck, Landmark, Home, Key, Store, Wallet,
 } from "lucide-react";
 import { WEBSITE_NAV, BRAND_PHONE } from "@/lib/website/constants";
-import { BrandWordmark } from "@/components/website/brand-wordmark";
+import { BrandLogo } from "@/components/website/brand-logo";
 import { ContactTrigger } from "@/components/website/contact-trigger";
 import { IconSelect } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -108,19 +108,7 @@ export function HeroSection({ heroData }: HeroSectionProps) {
     <section className="relative">
       <header className="relative z-40 border-b border-slate-100/80 bg-white/95 backdrop-blur-md">
         <div className="relative mx-auto flex h-[68px] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="group flex shrink-0 items-center gap-3">
-            <motion.span
-              whileHover={{ scale: 1.05, rotate: 2 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              className="flex h-10 w-10 items-center justify-center rounded-lg bg-hero-gold shadow-sm"
-            >
-              <span className="website-type text-lg text-white">T</span>
-            </motion.span>
-            <span className="leading-tight">
-              <BrandWordmark className="block text-[#0f1729]" />
-              <span className="block text-[9px] font-medium tracking-[0.22em] text-slate-400">FIND. BUY. BELONG.</span>
-            </span>
-          </Link>
+          <BrandLogo href="/" height={48} priority className="group" imageClassName="transition-transform duration-300 group-hover:scale-[1.03]" />
 
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 xl:flex">
             {WEBSITE_NAV.map((item) => {
