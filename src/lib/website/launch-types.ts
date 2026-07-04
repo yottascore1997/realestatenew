@@ -1,0 +1,20 @@
+export type LaunchLandingData = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  location: string;
+  city: string;
+  status: string;
+  launchDate?: string | null;
+  image?: string | null;
+  images?: string[];
+  priceFrom?: number | null;
+  priceTo?: number | null;
+  builder?: string | null;
+  bhk?: string | null;
+  possession?: string | null;
+  offer?: string | null;
+  projectId?: string | null;
+  projectName?: string | null;
+};

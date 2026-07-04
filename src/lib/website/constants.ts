@@ -70,6 +70,7 @@ export const PLATFORM_STATS = [
 export const PLACEHOLDER_LAUNCHES = [
   {
     id: "1",
+    slug: "lodha-bellevue",
     name: "Lodha Bellevue",
     builder: "Lodha Group",
     location: "Malabar Hill",
@@ -83,6 +84,7 @@ export const PLACEHOLDER_LAUNCHES = [
   },
   {
     id: "2",
+    slug: "godrej-infinity",
     name: "Godrej Infinity",
     builder: "Godrej Properties",
     location: "Koregaon Park",
@@ -96,6 +98,7 @@ export const PLACEHOLDER_LAUNCHES = [
   },
   {
     id: "3",
+    slug: "prestige-lakeside",
     name: "Prestige Lakeside",
     builder: "Prestige Group",
     location: "Whitefield",
@@ -109,6 +112,7 @@ export const PLACEHOLDER_LAUNCHES = [
   },
   {
     id: "4",
+    slug: "dlf-the-crest",
     name: "DLF The Crest",
     builder: "DLF Limited",
     location: "Sector 54",

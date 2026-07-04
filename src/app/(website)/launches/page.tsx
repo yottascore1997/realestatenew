@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { formatINR } from "@/lib/utils";
@@ -25,7 +26,11 @@ export default async function LaunchesPage() {
         <p className="website-body-text mt-2 text-slate-500">{launches.length} exclusive pre-launch & live opportunities</p>
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {launches.map((launch) => (
-            <div key={launch.id} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-shadow hover:shadow-xl">
+            <Link
+              key={launch.id}
+              href={`/launches/${launch.slug}`}
+              className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-lg transition-shadow hover:shadow-xl"
+            >
               <div className="relative h-52">
                 <img src={launch.image || ""} alt={launch.name} className="h-full w-full object-cover" />
                 <span className={`absolute left-3 top-3 rounded-md px-2 py-0.5 text-[10px] font-bold text-white ${
@@ -49,10 +54,10 @@ export default async function LaunchesPage() {
                   </p>
                 )}
                 <div className="mt-3 rounded-lg bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700">
-                  Pre-Launch Offer Available
+                  View Launch Page →
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
         {launches.length === 0 && (

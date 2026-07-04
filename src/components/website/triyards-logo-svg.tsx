@@ -76,17 +76,6 @@ function Wordmark({
   );
 }
 
-function CompactMark({ size = 40 }: { size?: number }) {
-  return (
-    <div
-      className="flex shrink-0 items-center justify-center rounded-xl bg-[#0f1729] shadow-[0_4px_14px_rgba(15,23,41,0.22)] ring-1 ring-orange-400/30"
-      style={{ width: size, height: size }}
-    >
-      <span className="website-type text-[1.1rem] font-bold leading-none text-orange-400">T</span>
-    </div>
-  );
-}
-
 function FullEmblem({ size = 52 }: { size?: number }) {
   const uid = useId().replace(/:/g, "");
   const g = `g-${uid}`;
@@ -114,6 +103,7 @@ export type TriyardsLogoProps = {
   theme?: "dark" | "light";
   variant?: "compact" | "full";
   height?: number;
+  showTagline?: boolean;
 };
 
 export function TriyardsLogoSvg({
@@ -121,18 +111,20 @@ export function TriyardsLogoSvg({
   theme = "dark",
   variant = "compact",
   height = 48,
+  showTagline,
 }: TriyardsLogoProps) {
   const full = variant === "full";
-  const markSize = full ? Math.round(height * 0.82) : Math.round(height * 0.88);
+  const markSize = Math.round(height * 0.82);
+  const tagline = showTagline ?? full;
 
   return (
-    <div className={cn("flex items-center", full ? "gap-3.5" : "gap-2.5", className)}>
-      {full ? <FullEmblem size={markSize} /> : <CompactMark size={markSize} />}
+    <div className={cn("flex items-center", full ? "gap-3.5" : "gap-3", className)}>
+      <FullEmblem size={markSize} />
       <Wordmark
         theme={theme}
         size={full ? "lg" : "md"}
         showRealty
-        showTagline={full}
+        showTagline={tagline}
       />
     </div>
   );

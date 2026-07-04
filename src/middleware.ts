@@ -3,10 +3,13 @@ import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth/session";
 
 const PUBLIC_API_PREFIXES = ["/api/auth/login", "/api/auth/logout"];
 
+const PUBLIC_POST_PREFIXES = ["/api/contacts", "/api/launches/inquiry"];
+
 const PUBLIC_GET_PREFIXES = ["/api/properties", "/api/projects", "/api/launches"];
 
 function isPublicApi(pathname: string, method: string) {
   if (PUBLIC_API_PREFIXES.some((p) => pathname.startsWith(p))) return true;
+  if (method === "POST" && PUBLIC_POST_PREFIXES.some((p) => pathname.startsWith(p))) return true;
   if (method === "GET" && PUBLIC_GET_PREFIXES.some((p) => pathname.startsWith(p))) return true;
   return false;
 }

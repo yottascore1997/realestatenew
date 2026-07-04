@@ -10,6 +10,7 @@ export type BrandLogoProps = {
   href?: string | null;
   variant?: "compact" | "full";
   theme?: "dark" | "light";
+  showTagline?: boolean;
 };
 
 export function BrandLogo({
@@ -19,12 +20,14 @@ export function BrandLogo({
   href = "/",
   variant = "compact",
   theme = "dark",
+  showTagline,
 }: BrandLogoProps) {
   const logo = (
     <TriyardsLogoSvg
       height={height}
       variant={variant}
       theme={theme}
+      showTagline={showTagline}
       className={cn("transition-transform duration-500 ease-out hover:scale-[1.02]", imageClassName)}
     />
   );

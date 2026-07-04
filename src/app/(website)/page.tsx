@@ -41,6 +41,7 @@ export default async function HomePage() {
 
   const mapLaunch = (l: LaunchRow) => ({
     id: l.id,
+    slug: l.slug,
     name: l.name,
     location: l.location,
     city: l.city,

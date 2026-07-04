@@ -22,15 +22,16 @@ type NavbarProps = {
 export function Navbar({ stats }: NavbarProps) {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isLaunchLanding = /^\/launches\/[^/]+$/.test(pathname ?? "");
   const [open, setOpen] = useState(false);
   const displayStats = stats ?? { propertyCount: 0, projectCount: 0, launchCount: 0, cityCount: 0 };
 
-  if (isHome) return null;
+  if (isHome || isLaunchLanding) return null;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:h-[76px] sm:px-6 lg:px-8">
-        <BrandLogo href="/" height={52} theme="dark" variant="compact" />
+        <BrandLogo href="/" height={56} theme="dark" variant="full" showTagline={false} />
 
         <nav className="hidden items-center gap-5 xl:flex">
           {WEBSITE_NAV.map((item) => {

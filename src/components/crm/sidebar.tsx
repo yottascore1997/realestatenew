@@ -68,7 +68,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
           <div className="relative flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
               <Link href="/crm" className="min-w-0 flex-1" onClick={onClose}>
-                <BrandLogo href={null} height={48} variant="compact" theme="light" />
+                <BrandLogo href={null} height={52} variant="full" theme="light" showTagline={false} />
               </Link>
               <button
                 type="button"

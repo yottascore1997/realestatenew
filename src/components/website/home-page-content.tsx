@@ -67,10 +67,23 @@ function SectionHeader({
 }
 
 interface LaunchItem {
-  id: string; name: string; location: string; city: string;
-  image?: string | null; priceFrom?: number | null; priceTo?: number | null;
-  builder?: string | null; bhk?: string | null; possession?: string | null; offer?: string | null;
+  id: string;
+  slug?: string;
+  name: string;
+  location: string;
+  city: string;
+  image?: string | null;
+  priceFrom?: number | null;
+  priceTo?: number | null;
+  builder?: string | null;
+  bhk?: string | null;
+  possession?: string | null;
+  offer?: string | null;
   status?: string;
+}
+
+function slugFromName(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 interface HomePageContentProps {
@@ -99,6 +112,7 @@ export function HomePageContent({
     if (l) {
       return {
         id: l.id,
+        slug: l.slug ?? ("slug" in ph ? ph.slug : slugFromName(l.name)),
         name: l.name,
         location: l.location || ph.location,
         city: l.city,
@@ -108,7 +122,7 @@ export function HomePageContent({
         image: l.image ?? ph.image,
       };
     }
-    return { ...ph };
+    return { ...ph, slug: ph.slug };
   });
 
   return (
@@ -143,7 +157,7 @@ export function HomePageContent({
                 transition={{ delay: i * 0.08, duration: 0.55 }}
                 className="w-[min(82vw,320px)] shrink-0 snap-start sm:w-auto sm:shrink"
               >
-                <Link href="/launches" className="premium-card group block ring-1 ring-orange-100/80">
+                <Link href={`/launches/${l.slug}`} className="premium-card group block ring-1 ring-orange-100/80">
                   <div className="relative h-52 overflow-hidden">
                     <img src={l.image || ""} alt={l.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f1729]/90 via-[#0f1729]/20 to-transparent" />

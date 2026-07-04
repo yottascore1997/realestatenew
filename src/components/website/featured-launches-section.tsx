@@ -5,11 +5,11 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
 import { PLACEHOLDER_LAUNCHES } from "@/lib/website/constants";
-import { ContactTrigger } from "@/components/website/contact-trigger";
 import { cn } from "@/lib/utils";
 
 export type FeaturedLaunch = {
   id: string;
+  slug?: string;
   name: string;
   builder?: string | null;
   location: string;
@@ -46,11 +46,17 @@ function builderInitials(name: string) {
     .toUpperCase();
 }
 
-function FeaturedCard({ launch }: { launch: FeaturedLaunch & { builder: string; offer: string } }) {
+function slugFromName(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function FeaturedCard({ launch }: { launch: FeaturedLaunch & { builder: string; offer: string; slug: string } }) {
   const builder = launch.builder ?? launch.name.split(" ")[0];
+  const href = `/launches/${launch.slug}`;
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 sm:rounded-2xl sm:shadow-[0_8px_40px_rgba(15,23,42,0.12)] lg:min-h-[400px] lg:flex-row">
+    <Link href={href} className="group block">
+    <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition-all group-hover:shadow-[0_12px_48px_rgba(15,23,42,0.14)] group-hover:ring-violet-200 sm:rounded-2xl sm:shadow-[0_8px_40px_rgba(15,23,42,0.12)] lg:min-h-[400px] lg:flex-row">
       {/* Hero image — top on mobile, right on desktop */}
       <div className="relative order-1 h-[200px] w-full shrink-0 sm:h-[260px] lg:order-2 lg:h-auto lg:min-h-[380px] lg:flex-1">
         <img
@@ -78,12 +84,9 @@ function FeaturedCard({ launch }: { launch: FeaturedLaunch & { builder: string; 
             </div>
             <div className="min-w-0 flex-1 pt-0.5">
               <p className="truncate text-sm font-bold text-[#111827] sm:text-base">{builder}</p>
-              <Link
-                href="/projects"
-                className="mt-0.5 inline-block text-xs font-semibold text-violet-600 hover:text-violet-700 hover:underline sm:text-sm"
-              >
-                View Projects
-              </Link>
+              <span className="mt-0.5 inline-block text-xs font-semibold text-violet-600 sm:text-sm">
+                View Launch Page →
+              </span>
             </div>
           </div>
 
@@ -120,16 +123,14 @@ function FeaturedCard({ launch }: { launch: FeaturedLaunch & { builder: string; 
           )}
         </div>
 
-        <ContactTrigger
-          inquiryType="New Projects"
-          context={`${launch.name} — ${launch.city}`}
-          defaultMessage={`I'm interested in ${launch.name} at ${launch.location}, ${launch.city}.`}
-          className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-[0_4px_16px_rgba(5,150,105,0.35)] transition-colors hover:bg-emerald-700 sm:mt-6 sm:h-12 sm:text-base lg:h-[52px] lg:text-lg"
+        <span
+          className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-[0_4px_16px_rgba(5,150,105,0.35)] transition-colors group-hover:bg-emerald-700 sm:mt-6 sm:h-12 sm:text-base lg:h-[52px] lg:text-lg"
         >
-          Contact
-        </ContactTrigger>
+          View Launch & Register →
+        </span>
       </div>
     </div>
+    </Link>
   );
 }
 
@@ -148,6 +149,7 @@ export function FeaturedLaunchesSection({ launches, header }: FeaturedLaunchesSe
     if (l) {
       return {
         id: l.id,
+        slug: l.slug ?? ("slug" in ph ? ph.slug : slugFromName(l.name)),
         name: l.name,
         builder: l.builder ?? ph.builder,
         location: l.location || ph.location,
@@ -160,7 +162,7 @@ export function FeaturedLaunchesSection({ launches, header }: FeaturedLaunchesSe
         image: l.image ?? ph.image,
       };
     }
-    return { ...ph };
+    return { ...ph, slug: ph.slug };
   });
 
   const total = items.length;

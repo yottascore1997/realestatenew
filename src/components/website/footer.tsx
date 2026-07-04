@@ -16,7 +16,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <div className="mb-5">
-              <BrandLogo href="/" height={56} variant="full" theme="light" />
+              <BrandLogo href="/" height={56} variant="full" theme="light" showTagline={false} />
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-white/50">
               India&apos;s premium real estate platform — verified listings, trusted builders, zero brokerage.
