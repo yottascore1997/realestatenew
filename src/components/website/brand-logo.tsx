@@ -1,43 +1,47 @@
-import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { BRAND_LOGO, BRAND_NAME } from "@/lib/website/constants";
+import { BRAND_NAME } from "@/lib/website/constants";
+import { TriyardsLogoSvg } from "@/components/website/triyards-logo-svg";
 
 export type BrandLogoProps = {
   className?: string;
   imageClassName?: string;
-  /** Display height in px */
   height?: number;
   href?: string | null;
-  priority?: boolean;
+  variant?: "compact" | "full";
+  theme?: "dark" | "light";
 };
 
 export function BrandLogo({
   className,
   imageClassName,
-  height = 44,
+  height = 48,
   href = "/",
-  priority = false,
+  variant = "compact",
+  theme = "dark",
 }: BrandLogoProps) {
-  const image = (
-    <Image
-      src={BRAND_LOGO}
-      alt={`${BRAND_NAME} Realty`}
-      width={200}
-      height={200}
-      priority={priority}
-      className={cn("w-auto object-contain", imageClassName)}
-      style={{ height: `${height}px`, width: "auto" }}
+  const logo = (
+    <TriyardsLogoSvg
+      height={height}
+      variant={variant}
+      theme={theme}
+      className={cn("transition-transform duration-500 ease-out hover:scale-[1.02]", imageClassName)}
     />
   );
 
+  const label = `${BRAND_NAME} Realty`;
+
   if (href) {
     return (
-      <Link href={href} className={cn("inline-flex shrink-0 items-center", className)}>
-        {image}
+      <Link href={href} aria-label={label} className={cn("inline-flex shrink-0 items-center", className)}>
+        {logo}
       </Link>
     );
   }
 
-  return <span className={cn("inline-flex shrink-0 items-center", className)}>{image}</span>;
+  return (
+    <span aria-label={label} className={cn("inline-flex shrink-0 items-center", className)}>
+      {logo}
+    </span>
+  );
 }

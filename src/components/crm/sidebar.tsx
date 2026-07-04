@@ -65,19 +65,21 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
       >
         <div className="relative overflow-hidden border-b border-white/10 px-5 py-5">
           <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-violet-600/20 blur-2xl" />
-          <div className="relative flex items-center justify-between gap-3">
-            <Link href="/crm" className="flex min-w-0 flex-1 flex-col items-start gap-1" onClick={onClose}>
-              <BrandLogo href={null} height={44} />
-              <p className="text-[10px] font-medium text-violet-300/70">Real Estate CRM</p>
-            </Link>
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={onClose}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
-            >
-              <X className="h-5 w-5" />
-            </button>
+          <div className="relative flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-3">
+              <Link href="/crm" className="min-w-0 flex-1" onClick={onClose}>
+                <BrandLogo href={null} height={48} variant="compact" theme="light" />
+              </Link>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={onClose}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-[10px] font-medium text-violet-300/70">Real Estate CRM</p>
           </div>
         </div>
 

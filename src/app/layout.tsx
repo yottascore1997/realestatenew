@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   title: "Triyards — Premium Real Estate Platform",
   description: "Buy, sell & invest in verified properties with zero brokerage. Home loans, legal support & end-to-end guidance.",
   icons: {
-    icon: "/images/logo.png",
-    apple: "/images/logo.png",
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 

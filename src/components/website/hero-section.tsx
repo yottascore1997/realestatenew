@@ -107,8 +107,8 @@ export function HeroSection({ heroData }: HeroSectionProps) {
   return (
     <section className="relative">
       <header className="relative z-40 border-b border-slate-100/80 bg-white/95 backdrop-blur-md">
-        <div className="relative mx-auto flex h-[68px] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <BrandLogo href="/" height={48} priority className="group" imageClassName="transition-transform duration-300 group-hover:scale-[1.03]" />
+        <div className="relative mx-auto flex h-[72px] max-w-7xl items-center px-4 sm:h-[76px] sm:px-6 lg:px-8">
+          <BrandLogo href="/" height={52} variant="compact" theme="dark" />
 
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 xl:flex">
             {WEBSITE_NAV.map((item) => {

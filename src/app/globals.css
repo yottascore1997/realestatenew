@@ -676,3 +676,35 @@ select option:hover {
 .border-hero-gold {
   border-color: #c5a059;
 }
+
+/* ── Luxury brand logo ── */
+.brand-logo-luxury {
+  filter: drop-shadow(0 2px 10px rgba(212, 175, 55, 0.18));
+  transition: filter 0.4s ease, transform 0.35s ease;
+}
+a:hover .brand-logo-luxury,
+.brand-logo-luxury:hover {
+  filter: drop-shadow(0 4px 18px rgba(212, 175, 55, 0.38));
+}
+
+/* Orange accent on white backgrounds — subtler than hero video glow */
+.brand-accent-glow-light {
+  filter: drop-shadow(0 0 6px rgba(249, 115, 22, 0.35));
+}
+@keyframes brandLogoPulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+.brand-logo-luxury circle[r="1.2"],
+.brand-logo-luxury circle[r="0.8"] {
+  animation: brandLogoPulse 3s ease-in-out infinite;
+}
+@keyframes brandLogoSweep {
+  0% { transform: translateX(-30px) rotate(-18deg); opacity: 0; }
+  35% { opacity: 0.12; }
+  65% { opacity: 0.12; }
+  100% { transform: translateX(90px) rotate(-18deg); opacity: 0; }
+}
+.brand-logo-shimmer-sweep rect {
+  animation: brandLogoSweep 5s ease-in-out infinite;
+}

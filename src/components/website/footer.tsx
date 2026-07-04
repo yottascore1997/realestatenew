@@ -16,7 +16,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
             <div className="mb-5">
-              <BrandLogo href="/" height={52} />
+              <BrandLogo href="/" height={56} variant="full" theme="light" />
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-white/50">
               India&apos;s premium real estate platform — verified listings, trusted builders, zero brokerage.
@@ -71,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/8 pt-6 text-center text-xs text-white/30">
-          © 2026 <BrandWordmark uppercase={false} size="inherit" className="inline text-xs tracking-[0.06em]" />. All rights reserved.
+          © 2026 <BrandWordmark theme="light" size="inherit" className="inline text-xs" />. All rights reserved.
         </div>
       </div>
     </footer>

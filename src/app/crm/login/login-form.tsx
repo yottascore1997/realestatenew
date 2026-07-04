@@ -65,13 +65,13 @@ export function CrmLoginForm() {
           <div className="w-full max-w-[420px]">
             {/* Mobile brand + tagline */}
             <div className="mb-6 text-center lg:hidden">
-              <BrandLogo href={null} height={56} className="mx-auto" />
+              <BrandLogo href={null} height={54} variant="full" theme="light" className="mx-auto" />
               <p className="mt-2 text-sm text-white/70">Secure team access</p>
             </div>
 
             {/* Desktop heading */}
             <div className="mb-7 hidden lg:block">
-              <BrandLogo href="/" height={48} className="mb-4" />
+              <BrandLogo href="/" height={56} variant="full" theme="dark" className="mb-4" />
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-600">Welcome back</p>
               <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">Sign in to CRM</h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">

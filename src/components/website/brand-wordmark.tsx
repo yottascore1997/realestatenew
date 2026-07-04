@@ -1,25 +1,33 @@
 import { cn } from "@/lib/utils";
-import { BRAND_NAME } from "@/lib/website/constants";
 
 type BrandWordmarkProps = {
   className?: string;
-  /** When true, renders TRIYARDS in all caps (logo style). When false, uses title case Triyards. */
-  uppercase?: boolean;
-  /** inherit = match parent font size (for inline headings) */
   size?: "default" | "inherit";
+  /** light = white text on dark backgrounds */
+  theme?: "dark" | "light";
 };
 
-/** TRIYARDS wordmark — Inter sans, bold, wide letter-spacing (matches footer) */
-export function BrandWordmark({ className, uppercase = true, size = "default" }: BrandWordmarkProps) {
+/** Matches hero "Find Your Dream Property" — Inter semibold + orange accent on "yards" */
+export function BrandWordmark({ className, size = "default", theme = "dark" }: BrandWordmarkProps) {
+  const isLight = theme === "light";
   return (
     <span
       className={cn(
-        "font-sans font-bold tracking-[0.1em]",
+        "website-type font-semibold tracking-wide",
         size === "default" && "text-lg",
+        isLight && "hero-text-shadow",
         className
       )}
     >
-      {uppercase ? BRAND_NAME.toUpperCase() : BRAND_NAME}
+      <span className={isLight ? "text-white" : "text-[#0f1729]"}>Tri</span>
+      <span
+        className={cn(
+          "inline-block text-[1.05em] text-orange-400",
+          isLight ? "hero-dream-glow" : "brand-accent-glow-light"
+        )}
+      >
+        yards
+      </span>
     </span>
   );
 }

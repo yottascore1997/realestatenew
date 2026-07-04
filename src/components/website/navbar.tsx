@@ -29,8 +29,8 @@ export function Navbar({ stats }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:h-16 sm:px-6 lg:px-8">
-        <BrandLogo href="/" height={40} priority />
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:h-[76px] sm:px-6 lg:px-8">
+        <BrandLogo href="/" height={52} theme="dark" variant="compact" />
 
         <nav className="hidden items-center gap-5 xl:flex">
           {WEBSITE_NAV.map((item) => {
