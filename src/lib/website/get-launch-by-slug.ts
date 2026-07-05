@@ -2,13 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { PLACEHOLDER_LAUNCHES } from "@/lib/website/constants";
 import type { LaunchLandingData } from "@/lib/website/launch-types";
 
-function slugify(name: string) {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 function mapDbLaunch(
   l: Awaited<ReturnType<typeof prisma.launch.findFirst>> & object
 ): LaunchLandingData {
@@ -40,7 +33,7 @@ function mapDbLaunch(
 
 const PLACEHOLDER_BY_SLUG: Record<string, LaunchLandingData> = Object.fromEntries(
   PLACEHOLDER_LAUNCHES.map((p, i) => {
-    const slug = "slug" in p && p.slug ? String(p.slug) : slugify(p.name);
+    const slug = p.slug;
     return [
       slug,
       {
