@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const utmSource = body.utmSource?.trim();
     const utmCampaign = body.utmCampaign?.trim();
 
-    let launch = launchSlug
+    const launch = launchSlug
       ? await prisma.launch.findUnique({ where: { slug: launchSlug }, include: { project: true } })
       : null;
 

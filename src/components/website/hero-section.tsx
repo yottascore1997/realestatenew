@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  Search, MapPin, Building2, Play, Rocket,
+  Search, MapPin, Building2, Play, Rocket, X,
   ShieldCheck, Award, BadgeCheck, Landmark, Home, Key, Store, Wallet,
 } from "lucide-react";
 import { WebsiteHeader } from "@/components/website/website-header";
