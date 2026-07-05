@@ -101,10 +101,10 @@ export function LaunchInquiryForm({
     variant === "banner"
       ? "h-11 shrink-0 bg-white px-6 text-[#0f1729] hover:bg-slate-100"
       : variant === "footer"
-        ? "h-11 bg-emerald-600 px-6 text-white hover:bg-emerald-700 sm:col-span-1"
+        ? "h-11 w-full bg-emerald-600 px-6 text-white hover:bg-emerald-700 sm:col-span-1 sm:w-auto"
         : variant === "offer"
           ? "h-12 w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:col-span-1 sm:h-11"
-          : "h-12 w-full bg-emerald-600 text-white hover:bg-emerald-700"
+          : "h-12 w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:h-12"
   );
 
   const offerField =

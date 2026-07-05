@@ -26,8 +26,8 @@ export function WebsiteHeader({ stats, className }: WebsiteHeaderProps) {
 
   return (
     <header className={className ?? "sticky top-0 z-50 border-b border-slate-100/80 bg-white/95 backdrop-blur-md"}>
-      <div className="relative mx-auto flex h-[72px] max-w-7xl items-center px-4 sm:h-[76px] sm:px-6 lg:px-8">
-        <BrandLogo href="/" height={56} variant="full" theme="dark" showTagline={false} />
+      <div className="relative mx-auto flex h-[64px] max-w-7xl items-center px-4 sm:h-[76px] sm:px-6 lg:px-8">
+        <BrandLogo href="/" height={48} variant="full" theme="dark" showTagline={false} />
 
         <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 xl:flex">
           {WEBSITE_NAV.map((item) => {
