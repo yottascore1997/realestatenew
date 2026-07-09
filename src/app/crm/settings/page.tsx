@@ -21,7 +21,7 @@ export default function SettingsPage() {
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Phone</label>
-            <input defaultValue="+91 98765 43210" className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#4F6BF5]" />
+            <input defaultValue="+91 78873 77880" className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-[#4F6BF5]" />
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">Address</label>

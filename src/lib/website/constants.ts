@@ -3,7 +3,6 @@ export const BRAND_LOGO = "/images/logonew.jpeg";
 
 export const WEBSITE_NAV = [
   { label: "Buy", href: "/properties" },
-  { label: "Rent", href: "/properties" },
   { label: "New Projects", href: "/projects" },
   { label: "Builders", href: "/projects" },
   { label: "Commercial", href: "/properties" },
@@ -20,16 +19,16 @@ export const HERO_TRUST_ITEMS = [
 ] as const;
 
 export const BUILDER_LOGOS = [
-  { name: "Lodha", logo: "/builders/lodha.svg" },
-  { name: "Godrej Properties", logo: "/builders/godrej.svg" },
-  { name: "DLF", logo: "/builders/dlf.svg" },
-  { name: "Piramal Realty", logo: "/builders/piramal.svg" },
-  { name: "Prestige Group", logo: "/builders/prestige.svg" },
-  { name: "Tata Housing", logo: "/builders/tata.svg" },
-  { name: "Shapoorji Pallonji", logo: "/builders/shapoorji.svg" },
-  { name: "Raheja Developers", logo: "/builders/raheja.svg" },
-  { name: "Brigade", logo: "/builders/brigade.svg" },
-  { name: "Mahindra Lifespaces", logo: "/builders/mahindra.svg" },
+  { name: "Lodha", logo: "https://logo.clearbit.com/lodhagroup.in" },
+  { name: "Godrej Properties", logo: "https://logo.clearbit.com/godrejproperties.com" },
+  { name: "DLF", logo: "https://logo.clearbit.com/dlf.in" },
+  { name: "Piramal Realty", logo: "https://logo.clearbit.com/piramalrealty.com" },
+  { name: "Prestige Group", logo: "https://logo.clearbit.com/prestigeconstructions.com" },
+  { name: "Tata Realty", logo: "https://logo.clearbit.com/tatarealty.in" },
+  { name: "Shapoorji Pallonji", logo: "https://logo.clearbit.com/shapoorjipallonji.com" },
+  { name: "Raheja Developers", logo: "https://logo.clearbit.com/raheja.com" },
+  { name: "Brigade Group", logo: "https://logo.clearbit.com/brigadegroup.com" },
+  { name: "Mahindra Lifespaces", logo: "https://logo.clearbit.com/mahindralifespaces.com" },
 ] as const;
 
 /** @deprecated use BUILDER_LOGOS */
@@ -312,5 +311,5 @@ export const POPULAR_SEARCHES = [
   "Commercial Office Space",
 ] as const;
 
-export const BRAND_PHONE = "+91 98765 43210";
+export const BRAND_PHONE = "+91 78873 77880";
 export const BRAND_EMAIL = "hello@triyards.com";

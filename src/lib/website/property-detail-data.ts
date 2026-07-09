@@ -43,7 +43,7 @@ export type PropertyDetail = {
 const DEFAULT_AGENT: PropertyAgent = {
   name: "Rahul Mehta",
   designation: "Senior Property Consultant",
-  phone: "+91 98765 43210",
+  phone: "+91 78873 77880",
   email: "rahul@triyards.com",
   avatar: null,
   rating: 4.8,

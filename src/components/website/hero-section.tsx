@@ -19,7 +19,6 @@ export const VIDEO_URL =
 
 const SEARCH_TABS = [
   { key: "buy", label: "Buy", icon: Home, href: "/properties" },
-  { key: "rent", label: "Rent", icon: Key, href: "/properties" },
   { key: "projects", label: "New Projects", icon: Rocket, href: "/projects" },
   { key: "commercial", label: "Commercial", icon: Store, href: "/properties" },
 ] as const;
@@ -97,8 +96,6 @@ export function HeroSection({ heroData }: HeroSectionProps) {
 
   return (
     <section className="relative">
-      <WebsiteHeader stats={stats} className="relative z-40 border-b border-slate-100/80 bg-white/95 backdrop-blur-md" />
-
       {/* Hero + video — reduced height */}
       <div className="relative min-h-[460px] overflow-hidden sm:min-h-[500px] lg:min-h-[520px]">
         <motion.div
@@ -142,13 +139,13 @@ export function HeroSection({ heroData }: HeroSectionProps) {
           >
             Find Your{" "}
             <motion.span
-              className="hero-dream-glow inline-block text-[1.05em] text-orange-400"
+              className="hero-dream-glow inline-block mx-1.5 px-3.5 py-0.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black shadow-lg shadow-orange-500/30 text-[0.9em]"
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.45, duration: 0.6, type: "spring", stiffness: 200 }}
             >
               Dream
-            </motion.span>{" "}
+            </motion.span> {" "}
             Property
           </motion.h1>
 

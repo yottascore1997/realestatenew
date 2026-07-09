@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Sparkles, Wallet, Layers, Calendar, ArrowRight } from "lucide-react";
 import { PLACEHOLDER_LAUNCHES } from "@/lib/website/constants";
 import { cn } from "@/lib/utils";
 
@@ -50,86 +50,178 @@ function slugFromName(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function getBuilderLogoStyle(name: string) {
+  const lowercase = name.toLowerCase();
+  if (lowercase.includes("lodha")) {
+    return {
+      font: "font-serif tracking-widest font-black text-[10px]",
+      color: "text-[#8A1A1A] border-[#8A1A1A]/20 bg-[#8A1A1A]/5",
+      text: "LODHA"
+    };
+  }
+  if (lowercase.includes("godrej")) {
+    return {
+      font: "font-sans font-extrabold tracking-tight italic text-[10px]",
+      color: "text-[#006838] border-[#006838]/20 bg-[#006838]/5",
+      text: "Godrej"
+    };
+  }
+  if (lowercase.includes("dlf")) {
+    return {
+      font: "font-sans font-black tracking-wide uppercase italic text-[10px]",
+      color: "text-[#003366] border-[#003366]/20 bg-[#003366]/5",
+      text: "DLF"
+    };
+  }
+  if (lowercase.includes("piramal")) {
+    return {
+      font: "font-sans font-semibold tracking-wider uppercase text-[9px]",
+      color: "text-[#a37c24] border-[#a37c24]/20 bg-[#a37c24]/5",
+      text: "PIRAMAL"
+    };
+  }
+  if (lowercase.includes("prestige")) {
+    return {
+      font: "font-serif font-black tracking-wider uppercase text-[9px]",
+      color: "text-[#1d3557] border-[#1d3557]/20 bg-[#1d3557]/5",
+      text: "PRESTIGE"
+    };
+  }
+  if (lowercase.includes("tata")) {
+    return {
+      font: "font-sans font-black tracking-widest uppercase italic text-[10px]",
+      color: "text-[#004B87] border-[#004B87]/20 bg-[#004B87]/5",
+      text: "TATA"
+    };
+  }
+  return {
+    font: "font-sans font-bold tracking-wide uppercase text-[10px]",
+    color: "text-slate-800 border-slate-200 bg-slate-50",
+    text: name.slice(0, 8)
+  };
+}
+
 function FeaturedCard({ launch }: { launch: FeaturedLaunch & { builder: string; offer: string; slug: string } }) {
   const builder = launch.builder ?? launch.name.split(" ")[0];
   const href = `/launches/${launch.slug}`;
+  const logoStyle = getBuilderLogoStyle(builder);
 
   return (
     <Link href={href} className="group block">
-    <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition-all group-hover:shadow-[0_12px_48px_rgba(15,23,42,0.14)] group-hover:ring-violet-200 sm:rounded-2xl sm:shadow-[0_8px_40px_rgba(15,23,42,0.12)] lg:min-h-[400px] lg:flex-row">
-      {/* Hero image — top on mobile, right on desktop */}
-      <div className="relative order-1 h-[200px] w-full shrink-0 sm:h-[260px] lg:order-2 lg:h-auto lg:min-h-[380px] lg:flex-1">
-        <img
-          src={launch.image || ""}
-          alt={launch.name}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent lg:bg-gradient-to-r lg:from-violet-950/30 lg:via-transparent lg:to-transparent" />
-        <span className="absolute right-3 top-3 rounded-md bg-orange-500 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-md sm:right-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[10px]">
-          New Launch
-        </span>
-        {/* Desktop/tablet image overlay */}
-        <div className="absolute bottom-3 left-3 right-3 hidden max-w-[75%] rounded-lg bg-black/35 px-3 py-2 backdrop-blur-sm sm:block sm:bottom-auto sm:left-6 sm:top-6 sm:right-auto">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-white/80 sm:text-xs">{builder}</p>
-          <p className="mt-0.5 line-clamp-2 text-sm font-bold text-white sm:text-base">{launch.name}</p>
-        </div>
-      </div>
+      <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_8px_32px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 transition-all duration-300 group-hover:shadow-[0_20px_50px_rgba(15,23,42,0.12)] group-hover:ring-violet-200 lg:min-h-[440px] lg:flex-row">
+        {/* Details panel — left on desktop */}
+        <div className="order-2 flex w-full flex-col justify-between bg-gradient-to-br from-white via-slate-50/20 to-violet-50/15 p-5 sm:p-6 lg:order-1 lg:w-[45%] lg:p-7">
+          <div className="min-w-0">
+            {/* Builder Header Card */}
+            <div className="flex items-center gap-3">
+              <div className={`flex h-10 w-16 shrink-0 items-center justify-center rounded-xl border px-1.5 shadow-sm text-center ${logoStyle.color}`}>
+                <span className={`${logoStyle.font} leading-none block`}>
+                  {logoStyle.text}
+                </span>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-bold text-slate-800 sm:text-sm">{builder}</p>
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-violet-600 uppercase tracking-wider group-hover:text-violet-700">
+                  View Launch Page <ArrowRight className="h-2.5 w-2.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </div>
+            </div>
 
-      {/* Details panel — below image on mobile, left on desktop */}
-      <div className="order-2 flex w-full flex-col justify-between bg-gradient-to-br from-white via-violet-50/40 to-pink-50/50 p-4 sm:p-6 lg:order-1 lg:w-[38%] lg:min-w-[300px] lg:max-w-[420px] lg:p-8">
-        <div className="min-w-0">
-          <div className="flex items-start gap-2.5 sm:gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-violet-100 bg-white text-xs font-black text-violet-700 shadow-sm sm:h-14 sm:w-14 sm:rounded-xl sm:text-sm">
-              {builderInitials(builder)}
-            </div>
-            <div className="min-w-0 flex-1 pt-0.5">
-              <p className="truncate text-sm font-bold text-[#111827] sm:text-base">{builder}</p>
-              <span className="mt-0.5 inline-block text-xs font-semibold text-violet-600 sm:text-sm">
-                View Launch Page →
+            {/* Launch Title */}
+            <h3 className="mt-4 line-clamp-2 text-lg font-black leading-tight text-slate-900 sm:mt-5 sm:text-2xl lg:text-[1.65rem]">
+              {launch.name}
+            </h3>
+
+            {/* Location */}
+            <p className="mt-2 flex items-start gap-1 text-xs font-medium text-slate-500 sm:text-sm">
+              <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet-500" />
+              <span className="line-clamp-2">
+                {launch.location}, {launch.city}
               </span>
+            </p>
+
+            {/* Specs Grid */}
+            <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
+              {/* Starting Price */}
+              <div className="rounded-xl border border-slate-100 bg-white p-2.5 shadow-sm text-center">
+                <div className="mx-auto flex h-6 w-6 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
+                  <Wallet className="h-3.5 w-3.5" />
+                </div>
+                <p className="mt-1.5 text-[8px] font-bold uppercase tracking-wider text-slate-400">Price</p>
+                <p className="mt-0.5 truncate text-xs font-black text-slate-800">
+                  {formatLaunchPrice(launch.priceFrom, launch.priceTo).split(" ")[0]}
+                </p>
+              </div>
+
+              {/* BHK */}
+              <div className="rounded-xl border border-slate-100 bg-white p-2.5 shadow-sm text-center">
+                <div className="mx-auto flex h-6 w-6 items-center justify-center rounded-lg bg-violet-100 text-violet-600">
+                  <Layers className="h-3.5 w-3.5" />
+                </div>
+                <p className="mt-1.5 text-[8px] font-bold uppercase tracking-wider text-slate-400">BHK</p>
+                <p className="mt-0.5 truncate text-xs font-black text-slate-800">
+                  {launch.bhk ? launch.bhk.split(" ")[0] + " BHK" : "2/3 BHK"}
+                </p>
+              </div>
+
+              {/* Possession */}
+              <div className="rounded-xl border border-slate-100 bg-white p-2.5 shadow-sm text-center">
+                <div className="mx-auto flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                  <Calendar className="h-3.5 w-3.5" />
+                </div>
+                <p className="mt-1.5 text-[8px] font-bold uppercase tracking-wider text-slate-400">Possession</p>
+                <p className="mt-0.5 truncate text-xs font-black text-slate-800">
+                  {launch.possession ? launch.possession.split(" ").slice(-1)[0] : "Dec 2027"}
+                </p>
+              </div>
             </div>
+
+            {/* Exclusive Offer Pill */}
+            {launch.offer && (
+              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-orange-500/20 bg-gradient-to-r from-orange-500/10 via-pink-500/5 to-transparent px-3 py-2 sm:py-2.5">
+                <div className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-orange-500 text-white shadow-md shadow-orange-500/20">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span className="absolute -right-0.5 -top-0.5 flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-75"></span>
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-pink-500"></span>
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-black text-orange-600 uppercase tracking-[0.15em] leading-none">Special Deal</span>
+                  <span className="text-xs font-bold text-slate-800 mt-1 leading-none">{launch.offer}</span>
+                </div>
+              </div>
+            )}
           </div>
 
-          <h3 className="mt-4 line-clamp-2 text-lg font-black leading-snug text-[#111827] sm:mt-6 sm:text-2xl lg:text-[1.65rem]">
-            {launch.name}
-          </h3>
-          <p className="mt-1.5 flex items-start gap-1.5 text-xs font-medium text-gray-500 sm:mt-2 sm:text-base">
-            <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet-500 sm:h-4 sm:w-4" />
-            <span className="line-clamp-2">
-              {launch.location}, {launch.city}
-            </span>
-          </p>
-
-          <p className="mt-3 break-words text-xl font-black tracking-tight text-[#111827] sm:mt-5 sm:text-3xl lg:text-[2rem]">
-            {formatLaunchPrice(launch.priceFrom, launch.priceTo)}
-          </p>
-
-          {launch.bhk && (
-            <p className="mt-1.5 text-xs font-medium text-gray-600 sm:mt-2 sm:text-base">{launch.bhk}</p>
-          )}
-          {launch.possession && (
-            <p className="mt-0.5 text-[11px] font-medium text-gray-400 sm:mt-1 sm:text-sm">
-              Possession {launch.possession}
-            </p>
-          )}
-
-          {launch.offer && (
-            <div className="mt-3 flex w-full max-w-full items-start gap-2 rounded-lg border border-pink-200/80 bg-pink-50 px-2.5 py-2 sm:mt-5 sm:inline-flex sm:w-auto sm:items-center sm:px-3">
-              <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pink-500 sm:mt-0 sm:h-4 sm:w-4" />
-              <span className="line-clamp-2 text-[11px] font-semibold leading-snug text-pink-700 sm:line-clamp-1 sm:text-sm">
-                {launch.offer}
-              </span>
-            </div>
-          )}
+          {/* Call To Action Button */}
+          <span
+            className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-sm font-bold text-white shadow-[0_4px_16px_rgba(5,150,105,0.25)] transition-all duration-300 group-hover:shadow-[0_6px_24px_rgba(5,150,105,0.35)] group-hover:scale-[1.01] sm:h-12"
+          >
+            View Launch & Register <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </span>
         </div>
 
-        <span
-          className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-emerald-600 text-sm font-bold text-white shadow-[0_4px_16px_rgba(5,150,105,0.35)] transition-colors group-hover:bg-emerald-700 sm:mt-6 sm:h-12 sm:text-base lg:h-[52px] lg:text-lg"
-        >
-          View Launch & Register →
-        </span>
+        {/* Right Side: Hero image — 55% width on desktop */}
+        <div className="relative order-1 h-[220px] w-full shrink-0 overflow-hidden sm:h-[280px] lg:order-2 lg:h-auto lg:flex-1">
+          <img
+            src={launch.image || ""}
+            alt={launch.name}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent lg:bg-gradient-to-r lg:from-slate-900/40 lg:via-transparent lg:to-transparent" />
+          
+          <span className="absolute left-4 top-4 rounded-xl bg-orange-500/90 backdrop-blur-sm px-3 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-lg">
+            Editor&apos;s Pick
+          </span>
+
+          <div className="absolute bottom-4 left-4 right-4 max-w-[85%] rounded-2xl bg-black/45 p-4 backdrop-blur-md border border-white/10 sm:bottom-6 sm:left-6 shadow-2xl">
+            <p className="text-[10px] font-black uppercase tracking-widest text-orange-400">{builder}</p>
+            <p className="mt-1 line-clamp-1 text-base font-black text-white sm:text-lg">{launch.name}</p>
+            <p className="text-[11px] text-white/70 line-clamp-1 mt-0.5">{launch.location}, {launch.city}</p>
+          </div>
+        </div>
       </div>
-    </div>
     </Link>
   );
 }
@@ -141,6 +233,7 @@ type FeaturedLaunchesSectionProps = {
 
 export function FeaturedLaunchesSection({ launches, header }: FeaturedLaunchesSectionProps) {
   const [idx, setIdx] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   const items = Array.from({ length: 4 }, (_, i) => {
@@ -170,6 +263,14 @@ export function FeaturedLaunchesSection({ launches, header }: FeaturedLaunchesSe
 
   const go = (dir: -1 | 1) => setIdx((i) => (i + dir + total) % total);
 
+  useEffect(() => {
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setIdx((i) => (i + 1 + total) % total);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isHovered, idx, total]);
+
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -186,7 +287,11 @@ export function FeaturedLaunchesSection({ launches, header }: FeaturedLaunchesSe
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         {header}
 
-        <div className="relative mt-4 sm:mt-8">
+        <div 
+          className="relative mt-4 sm:mt-8"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <button
             type="button"
             onClick={() => go(-1)}

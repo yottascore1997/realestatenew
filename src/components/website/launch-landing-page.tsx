@@ -1,432 +1,696 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
   MapPin, Phone, Download, Play, Building2, Trees, ShieldCheck,
   Dumbbell, Waves, Baby, Footprints, Zap, TreePine, Award, Clock, BadgeCheck,
   Gift, Landmark, TrainFront, Sparkles, Layers, ArrowRight,
-  Car, ShoppingBag, GraduationCap, Plane, Wallet, CalendarCheck, Users, TrendingUp,
+  Car, ShoppingBag, GraduationCap, Plane, Wallet, CalendarCheck, Users, TrendingUp, Info, FileText, CheckCircle2, ChevronRight, User, Mail, Send,
+  Star, ShieldAlert, Heart, Share2, Compass, Check
 } from "lucide-react";
-import { WebsiteHeader } from "@/components/website/website-header";
-import { LaunchInquiryForm } from "@/components/website/launch-inquiry-form";
 import { LaunchLeadPopup } from "@/components/website/launch-lead-popup";
 import { LaunchFloatingCta } from "@/components/website/launch-floating-cta";
 import { BRAND_PHONE } from "@/lib/website/constants";
 import { cn } from "@/lib/utils";
-import { lp } from "@/components/website/launch-premium-theme";
 import type { LaunchLandingData } from "@/lib/website/launch-types";
-import type { HeroSearchData } from "@/lib/website/get-hero-data";
 
-const OFFER_PERKS = [
-  { icon: Wallet, label: "Zero Booking Amount" },
-  { icon: CalendarCheck, label: "Flexible Payment Plans" },
-  { icon: TrendingUp, label: "High Appreciation Zone" },
-  { icon: MapPin, label: "Free Site Visit" },
-];
-
-const TRUST_STATS = [
-  { icon: Award, value: "100+", label: "Years Legacy of Trust" },
-  { icon: Building2, value: "Top", label: "Builders & Projects" },
-  { icon: Layers, value: "50+", label: "Cities Covered" },
-  { icon: Users, value: "10K+", label: "Happy Clients" },
-  { icon: BadgeCheck, value: "Zero", label: "Brokerage Policy" },
-];
-
-function getFeatureBar(launch: LaunchLandingData) {
-  const bhkSub = launch.bhk ?? "2, 3 & 4 BHK options";
-  return [
-    { icon: Building2, title: "Premium Living", sub: "World-class finishes" },
-    { icon: Layers, title: "Spacious Homes", sub: bhkSub },
-    { icon: Trees, title: "70%+ Open Spaces", sub: "Green & landscaped" },
-    { icon: ShieldCheck, title: "RERA Verified", sub: "100% compliant" },
-    { icon: Sparkles, title: "50+ Amenities", sub: "Clubhouse, pool & gym" },
-    { icon: TrainFront, title: "Connectivity", sub: "Metro & highway access" },
-  ];
-}
+type LaunchLandingPageProps = {
+  launch: LaunchLandingData;
+  stats?: any;
+};
 
 const AMENITIES = [
-  { icon: Building2, label: "Clubhouse" },
-  { icon: Waves, label: "Swimming Pool" },
-  { icon: Dumbbell, label: "Gymnasium" },
-  { icon: Baby, label: "Kids Play Area" },
-  { icon: TreePine, label: "Landscaped Gardens" },
-  { icon: Footprints, label: "Jogging Track" },
-  { icon: Zap, label: "Power Backup" },
-  { icon: ShieldCheck, label: "24×7 Security" },
-  { icon: Car, label: "Car Parking" },
-  { icon: Sparkles, label: "Party Lawn" },
+  { icon: Building2, label: "50,000 Sq.Ft. Clubhouse", desc: "Multi-level entertainment hub" },
+  { icon: Waves, label: "Infinity Swimming Pool", desc: "Temperature-controlled deck" },
+  { icon: Dumbbell, label: "State-of-the-art Gym", desc: "Cardio & strength equipment" },
+  { icon: Baby, label: "Kids Play Zone", desc: "Indoor & outdoor activity area" },
+  { icon: TreePine, label: "Landscaped Gardens", desc: "Theme parks & nature trails" },
+  { icon: Footprints, label: "Jogging & Cycling Track", desc: "Cushioned professional track" },
+  { icon: Zap, label: "Power Backup", desc: "100% automatic generator backup" },
+  { icon: ShieldCheck, label: "4-tier Security", desc: "CCTV, RFID access & guards" },
+  { icon: Car, label: "Multi-level Parking", desc: "Reserved slot with EV chargers" },
 ];
 
-const LOCATION_PERKS = [
-  { icon: TrainFront, label: "5 Mins from Metro / Highway" },
-  { icon: GraduationCap, label: "Top Schools Nearby" },
-  { icon: ShoppingBag, label: "Shopping & Malls Close" },
-  { icon: Plane, label: "Airport / IT Hub Access" },
-  { icon: Landmark, label: "Prime Business District" },
+const FLOOR_PLANS = [
+  {
+    bhk: "2 BHK Luxury",
+    size: "1,180 - 1,260 Sq.Ft.",
+    price: "₹68 Lakh - ₹78 Lakh",
+    carpet: "840 Sq.Ft.",
+    deck: "65 Sq.Ft. Premium deck",
+    details: "Ideal for young families. Features master bedroom with attached bath, spacious modular kitchen, dining deck, and separate dry balcony."
+  },
+  {
+    bhk: "3 BHK Premium",
+    size: "1,580 - 1,820 Sq.Ft.",
+    price: "₹95 Lakh - ₹1.18 Cr",
+    carpet: "1,120 Sq.Ft.",
+    deck: "90 Sq.Ft. Double-height deck",
+    details: "Perfect lifestyle balance. Includes large family living-dining hall, 3 balconies, parent's bedroom, grand master bedroom, and premium fittings."
+  },
+  {
+    bhk: "4 BHK Signature",
+    size: "2,250 - 2,680 Sq.Ft.",
+    price: "₹1.42 Cr - ₹1.55 Cr",
+    carpet: "1,690 Sq.Ft.",
+    deck: "140 Sq.Ft. Panoramic sky deck",
+    details: "Unmatched luxury. Private elevator lobby, double-height deck overlooking central gardens, servant quarters, wet & dry kitchen, and Italian marble."
+  }
+];
+
+const BUDGET_OPTIONS = [
+  "Under ₹50 Lakh",
+  "₹50 L - ₹1 Cr",
+  "₹1 Cr - ₹2 Cr",
+  "₹2 Cr - ₹5 Cr",
+  "Above ₹5 Cr",
+];
+
+const BHK_OPTIONS = ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "4+ BHK", "Plot / Villa"];
+
+const LOCATION_HUBS = [
+  {
+    category: "IT & Business Parks",
+    icon: Building2,
+    items: [
+      { name: "Prestige Tech Park", time: "10 Mins" },
+      { name: "Wipro Corporate Office", time: "5 Mins" },
+      { name: "RGA Tech Park", time: "8 Mins" },
+      { name: "Outer Ring Road (ORR) Hub", time: "12 Mins" }
+    ]
+  },
+  {
+    category: "Schools & Education",
+    icon: GraduationCap,
+    items: [
+      { name: "Greenwood High School", time: "5 Mins" },
+      { name: "Oakridge International School", time: "4 Mins" },
+      { name: "The International School Bangalore (TISB)", time: "6 Mins" },
+      { name: "Inventure Academy", time: "8 Mins" }
+    ]
+  },
+  {
+    category: "Hospitals & Care",
+    icon: Landmark,
+    items: [
+      { name: "Motherhood Hospital", time: "8 Mins" },
+      { name: "Columbia Asia / Manipal Hospital", time: "10 Mins" },
+      { name: "Sakra World Hospital", time: "15 Mins" }
+    ]
+  },
+  {
+    category: "Shopping & Transit",
+    icon: ShoppingBag,
+    items: [
+      { name: "Sarjapur Forum Mall", time: "12 Mins" },
+      { name: "Decathlon Sarjapur", time: "5 Mins" },
+      { name: "Proposed Metro Station", time: "10 Mins" },
+      { name: "Kempegowda Int. Airport", time: "55 Mins" }
+    ]
+  }
+];
+
+const PAYMENT_MILESTONES = [
+  { title: "Booking Amount", pct: "10%", desc: "Payable at the time of booking to secure your unit." },
+  { title: "Excavation Stage", pct: "15%", desc: "Upon commencement of foundation & excavation work." },
+  { title: "Structure Milestones", pct: "50%", desc: "Linked slab-wise construction installments over 24 months." },
+  { title: "On Handover", pct: "25%", desc: "Due on registry, final finish inspection, and key handover." }
 ];
 
 function formatPrice(from?: number | null, to?: number | null) {
   const fmt = (n: number) => {
     if (n >= 10000000) return `₹${(n / 10000000).toFixed(n % 10000000 === 0 ? 0 : 1)} Cr`;
-    return `₹${(n / 100000).toFixed(0)} L`;
+    return `₹${(n / 100000).toFixed(0)} Lakh`;
   };
   if (!from) return "Price on Request";
-  if (to && to > from) return `${fmt(from)} – ${fmt(to)}`;
+  if (to && to > from) return `${fmt(from)} - ${fmt(to)}`;
   return `${fmt(from)} onwards`;
 }
 
-type LaunchLandingPageProps = {
-  launch: LaunchLandingData;
-  stats?: HeroSearchData["stats"];
-};
-
-export function LaunchLandingPage({ launch, stats }: LaunchLandingPageProps) {
-  const gallery = (() => {
-    const base = launch.images?.length ? [...launch.images] : launch.image ? [launch.image] : [];
-    if (base.length === 0) return [];
-    while (base.length < 4) base.push(...base);
-    return base.slice(0, 4);
-  })();
+export function LaunchLandingPage({ launch }: LaunchLandingPageProps) {
+  const [selectedPlan, setSelectedPlan] = useState(0);
+  const [form, setForm] = useState({
+    fullName: "",
+    mobile: "",
+    email: "",
+    bhk: launch.bhk ?? "",
+    budget: "",
+    message: `I'm interested in ${launch.name}. Please share floor plans, pricing & site visit slots.`,
+  });
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
 
   const phoneHref = `tel:${BRAND_PHONE.replace(/\s/g, "")}`;
-  const amenityLabels = ["Premium Clubhouse", "Walkway View", "Kids Play Area", "Landscaped Gardens"];
-  const featureBar = getFeatureBar(launch);
-  const offerText = launch.offer ?? "Club Membership Worth ₹5 L Included";
+  
+  const getDynamicRera = (city: string, slug: string) => {
+    if (city.toLowerCase().includes("pune") || city.toLowerCase().includes("mumbai")) {
+      return `MHRD/MH/RERA/P521000${slug === "royal-gardens" ? "43120" : "004312"}`;
+    }
+    return `PRM/KA/RERA/1251/310/PR/210928/004312`;
+  };
+  
+  const reraNumber = getDynamicRera(launch.city, launch.slug);
+  const startPrice = formatPrice(launch.priceFrom, launch.priceTo);
+  const bhkOptions = launch.bhk ? [...new Set([launch.bhk, ...BHK_OPTIONS])] : BHK_OPTIONS;
 
-  const heroStats = [
-    { icon: Landmark, value: "10+ Acres", label: "Land Parcel" },
-    { icon: Trees, value: "70%+", label: "Open Spaces" },
-    { icon: Building2, value: "40+", label: "Floor Tower" },
-    { icon: Layers, value: launch.bhk?.split(",")[0]?.trim() ?? "2-4 BHK", label: "Homes" },
-  ];
-
-  const highlights = [
-    { icon: Building2, label: "Project Name", value: launch.name },
-    { icon: MapPin, label: "Location", value: `${launch.location}, ${launch.city}` },
-    { icon: Layers, label: "Configuration", value: launch.bhk ?? "2, 3 & 4 BHK" },
-    { icon: Trees, label: "Starting Price", value: formatPrice(launch.priceFrom, launch.priceTo) },
-    { icon: Clock, label: "Status", value: launch.possession ?? launch.status },
-  ];
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.fullName.trim() || !form.mobile.trim()) {
+      setError("Please enter your name and mobile number.");
+      return;
+    }
+    const digits = form.mobile.replace(/\D/g, "");
+    if (digits.length < 10) {
+      setError("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/launches/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          mobile: form.mobile,
+          email: form.email,
+          bhk: form.bhk,
+          budget: form.budget,
+          message: form.message,
+          launchSlug: launch.slug,
+          launchName: launch.name,
+          launchCity: launch.city,
+          launchLocation: launch.location,
+          projectId: launch.projectId,
+          utmSource: "launch-lp-hero",
+          utmCampaign: launch.slug,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Submission failed");
+      setDone(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className={lp.page}>
-      {/* Hero */}
-      <section id="overview" className="relative">
-        <WebsiteHeader stats={stats} className="relative z-40 border-b border-slate-100/80 bg-white/95 backdrop-blur-md" />
+    <div className="min-h-screen bg-slate-50 text-slate-800 selection:bg-orange-500/10 selection:text-orange-950 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:pb-0 relative font-sans">
+      
+      {/* 1. Header Details Area (CoFynd Style Header Area with Premium Dark Background) */}
+      <section className="bg-[#0b1329] border-b border-slate-800/80 pt-8 pb-8 text-white relative overflow-hidden">
+        {/* Ambient gold glow spotlight behind the dark header */}
+        <div className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full bg-gradient-to-l from-amber-500/10 to-transparent blur-[80px] pointer-events-none z-0" />
+        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              {/* Builder Info */}
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">
+                  {launch.builder ?? "PREMIUM BUILDER"}
+                </span>
+                <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">OFFICIAL LAUNCH</span>
+              </div>
 
-        <div className="relative min-h-0 overflow-hidden sm:min-h-[520px] lg:min-h-[560px]">
-          {launch.image ? (
-            <>
-              <img
-                src={launch.image}
-                alt=""
-                className="absolute inset-0 h-full min-h-[220px] w-full object-cover object-center sm:min-h-full"
-              />
-              {/* Mobile: top-to-bottom white wash for readable copy */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white/98 via-white/92 to-white/80 lg:hidden" />
-              {/* Desktop: side gradients */}
-              <div
-                className="absolute inset-0 hidden lg:block"
-                style={{
-                  background: `
-                    linear-gradient(to right, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.82) 32%, rgba(255,255,255,0.35) 52%, transparent 68%),
-                    linear-gradient(to left, rgba(255,255,255,0.7) 0%, transparent 22%)
-                  `,
-                }}
-              />
-            </>
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white" />
-          )}
-
-          <div className="relative mx-auto grid max-w-7xl items-start gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-10 lg:grid-cols-[1fr_360px] lg:gap-10 lg:px-8 lg:py-12">
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="min-w-0 max-w-xl lg:max-w-2xl">
-              <span className={lp.tag}>Premium {launch.city} Living</span>
-
-              <h1 className="website-type mt-4 text-[1.65rem] font-semibold leading-[1.12] text-[#0f1729] sm:mt-5 sm:text-4xl lg:text-[2.75rem]">
-                Live Premium,
-                <br />
-                <span className="text-theme-orange">In {launch.city}.</span>
+              {/* Title & Location details */}
+              <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight tracking-tight">
+                {launch.name}
               </h1>
-
-              <p className="mt-2 text-base font-bold sm:mt-3 sm:text-lg">{launch.name}</p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600 sm:text-[15px]">{launch.description}</p>
-
-              <div className="mt-5 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4 sm:grid-cols-4">
-                {heroStats.map(({ icon: Icon, value, label }) => (
-                  <div key={label} className="min-w-0 text-center sm:text-left">
-                    <div className={cn("mx-auto sm:mx-0", lp.iconCircleSm)}>
-                      <Icon className="h-4 w-4" strokeWidth={1.5} />
-                    </div>
-                    <p className="mt-1.5 truncate text-sm font-bold text-[#0f1729] sm:mt-2">{value}</p>
-                    <p className="truncate text-[10px] text-slate-500 sm:text-[11px]">{label}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row">
-                <a href="#register" className={lp.btnPrimary}>
-                  <Download className="h-4 w-4" /> Download Brochure
-                </a>
-                <a href="#gallery" className={lp.btnSecondary}>
-                  <Play className="h-4 w-4" />
-                  <span className="sm:hidden">Gallery</span>
-                  <span className="hidden sm:inline">View Project Gallery</span>
-                </a>
-              </div>
-            </motion.div>
-
-            <motion.div
-              id="register"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="min-w-0 lg:sticky lg:top-[92px]"
-            >
-              <LaunchInquiryForm launch={launch} variant="hero" utmSource="launch-lp" utmCampaign={launch.slug} />
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Floating feature bar */}
-        <div className="relative z-10 mt-4 px-4 pb-6 sm:mt-8 sm:px-6 sm:pb-10 lg:px-8">
-          <div className={cn("mx-auto max-w-6xl", lp.featureBar)}>
-            <div className="grid grid-cols-2 divide-x divide-y divide-white/10 sm:grid-cols-3 lg:grid-cols-6">
-              {featureBar.map(({ icon: Icon, title, sub }) => (
-                <div
-                  key={title}
-                  className="flex flex-col items-center px-3 py-4 text-center sm:px-4 sm:py-5"
-                >
-                  <div className={lp.featureBarIcon}>
-                    <Icon className="h-4 w-4" strokeWidth={1.5} />
-                  </div>
-                  <p className="mt-2 text-[11px] font-bold leading-tight text-white sm:text-xs">{title}</p>
-                  <p className="mt-0.5 line-clamp-2 text-[9px] leading-snug text-white/55 sm:text-[10px]">{sub}</p>
+              
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-xs text-slate-350">
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4 text-orange-400" />
+                  <span className="font-bold text-slate-200">{launch.location}, {launch.city}</span>
                 </div>
-              ))}
+                <div className="h-3.5 w-[1px] bg-slate-800 hidden sm:block" />
+                <div className="flex items-center gap-1 bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-lg border border-emerald-500/20 text-[11px]">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>RERA Regd: <strong>{reraNumber.split("/").slice(-1)[0]}</strong></span>
+                </div>
+                <div className="h-3.5 w-[1px] bg-slate-800 hidden sm:block" />
+                <div className="flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 text-amber-450 fill-amber-450" />
+                  <span className="font-black text-white">4.9</span>
+                  <span className="text-slate-400 font-medium">(120+ Reviews)</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Project Highlights */}
-      <section id="highlights" className={cn("pb-10 pt-8 sm:pb-16 sm:pt-12", lp.sectionWhite)}>
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <h2 className={lp.sectionTitle}>Project Highlights</h2>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-5 sm:gap-0 sm:divide-x sm:divide-slate-100">
-            {highlights.map(({ icon: Icon, label, value }) => (
-              <div key={label} className="flex flex-col items-center rounded-xl border border-slate-100 bg-slate-50/50 px-2 py-4 text-center sm:rounded-none sm:border-0 sm:bg-transparent sm:px-3 sm:py-5">
-                <div className={lp.iconCircleMd}>
-                  <Icon className="h-5 w-5" strokeWidth={1.5} />
-                </div>
-                <p className="mt-2 text-[9px] font-medium uppercase tracking-wide text-slate-400 sm:mt-3 sm:text-[10px]">{label}</p>
-                <p className="mt-1 break-words text-xs font-bold leading-snug text-[#0f1729] sm:text-sm">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Amenities + Gallery */}
-      <section id="amenities" className={cn("relative py-10 sm:py-16", lp.sectionAlt)}>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_0%_0%,rgba(249,115,22,0.06),transparent_50%)]" />
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:px-8">
-          <div className="min-w-0">
-            <p className={lp.sectionEyebrow}>Lifestyle &amp; Comfort</p>
-            <h2 className="text-lg font-bold text-[#0f1729] sm:text-2xl">
-              <span className="text-theme-orange">50+</span> World-Class Amenities
-            </h2>
-            <div className={lp.accentBar} />
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-600 sm:mt-4">
-              Curated amenities for modern families — wellness, recreation &amp; entertainment within your community.
-            </p>
-            <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-8 sm:gap-3 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-              {AMENITIES.map(({ icon: Icon, label }) => (
-                <div key={label} className={cn(lp.amenityTile, "p-3 sm:p-4")}>
-                  <div className={cn("h-10 w-10 transition-transform duration-300 group-hover:scale-110 sm:h-12 sm:w-12", lp.iconCircle)}>
-                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={1.75} />
-                  </div>
-                  <p className="mt-2 text-[10px] font-bold leading-tight text-[#0f1729] sm:mt-3 sm:text-xs">{label}</p>
-                </div>
-              ))}
+            {/* Quick Pricing Callout on right header */}
+            <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-2 bg-slate-900/60 border border-slate-800/80 rounded-xl p-3.5 md:min-w-[200px] shadow-lg backdrop-blur-sm">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Starting Price</span>
+              <span className="text-xl sm:text-2xl font-black text-orange-400 leading-none">{startPrice}</span>
+              <span className="text-[9px] font-bold text-slate-400">*Govt. Taxes Extra</span>
             </div>
           </div>
 
-          {gallery.length > 0 && (
-            <div id="gallery" className="group flex min-w-0 flex-col gap-3 sm:grid sm:grid-cols-[1.15fr_1fr]">
-              <div className={lp.galleryMain}>
-                <img src={gallery[0]} alt="" className="h-full min-h-[200px] w-full object-cover sm:min-h-[320px] lg:min-h-[400px]" />
-                <span className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0f1729]/80 via-[#0f1729]/40 to-transparent px-4 py-3 text-sm font-bold text-white">
-                  {amenityLabels[0]}
+        </div>
+      </section>
+
+      {/* 2. Image Gallery Grid Layout (CoFynd / Booking.com Style) */}
+      <section className="bg-slate-100 border-b border-slate-200 py-4 sm:py-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 rounded-2xl overflow-hidden shadow-md">
+            
+            {/* Left Big image (Featured photo) */}
+            <div className="md:col-span-2 relative aspect-[16/9] md:aspect-auto md:h-[400px] bg-slate-200">
+              {launch.image && (
+                <img
+                  src={launch.image}
+                  alt={launch.name}
+                  className="h-full w-full object-cover"
+                />
+              )}
+              <span className="absolute bottom-4 left-4 rounded-lg bg-black/60 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                Exterior Rendering
+              </span>
+            </div>
+
+            {/* Right stacked stacked image mock gallery */}
+            <div className="hidden md:flex flex-col gap-2.5 h-[400px]">
+              <div className="flex-1 relative bg-slate-200 overflow-hidden">
+                {launch.image ? (
+                  <img
+                    src={launch.image}
+                    alt="Clubhouse Rendering"
+                    className="h-full w-full object-cover scale-110 rotate-1 transform filter saturate-[1.1]"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-slate-300" />
+                )}
+                <span className="absolute bottom-3 left-3 rounded bg-black/60 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                  Clubhouse
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-col sm:gap-3">
-                {gallery.slice(1, 4).map((src, i) => (
-                  <div key={src + i} className={cn(lp.galleryThumb, "min-h-[72px] sm:min-h-0 sm:flex-1")}>
-                    <img src={src} alt="" className="h-full min-h-[72px] w-full object-cover sm:min-h-[100px] transition-transform duration-500 hover:scale-105" />
-                    <span className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0f1729]/75 to-transparent px-3 py-2 text-[11px] font-bold text-white">
-                      {amenityLabels[i + 1] ?? `View ${i + 2}`}
-                    </span>
+              <div className="flex-1 relative bg-slate-200 overflow-hidden">
+                {launch.image ? (
+                  <img
+                    src={launch.image}
+                    alt="Master Plan Blueprint"
+                    className="h-full w-full object-cover scale-125 translate-x-3 filter saturate-[0.85] contrast-[1.15]"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-slate-400" />
+                )}
+                <span className="absolute bottom-3 left-3 rounded bg-black/60 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                  Landscape Garden
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Split Page Layout (Left content, Right sticky Inquiry Form) */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.85fr_1.15fr] gap-8 items-start">
+          
+          {/* LEFT MAIN DETAILS COLUMN */}
+          <div className="space-y-8">
+            
+            {/* Highlights quick specs section */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-base font-black text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-100">
+                Project Key Highlights
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { icon: Building2, label: "Clubhouse Size", val: "50,000+ Sq.Ft." },
+                  { icon: GraduationCap, label: "Campus Education", val: "International School" },
+                  { icon: ShoppingBag, label: "Shopping Mall", val: "High Street Retail" },
+                  { icon: Landmark, label: "Medical Facilities", val: "Multi-Speciality" }
+                ].map(({ icon: Icon, label, val }) => (
+                  <div key={label} className="flex gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-100 shadow-sm">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-slate-450 font-bold uppercase tracking-wider leading-none">{label}</p>
+                      <p className="text-xs font-black text-slate-800 mt-1 leading-tight">{val}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-          )}
-        </div>
-      </section>
 
-      {/* Location */}
-      <section id="location" className={cn("relative overflow-hidden py-10 sm:py-16", lp.sectionLocation)}>
-        <div className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-orange-100/40 blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 sm:gap-12 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:px-8">
-          <div className="min-w-0">
-            <p className={lp.sectionEyebrow}>Connectivity &amp; Convenience</p>
-            <h2 className="text-lg font-bold text-[#0f1729] sm:text-2xl">Prime Location Advantages</h2>
-            <div className={lp.accentBar} />
-            <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full bg-[#0f1729] px-3 py-2 text-xs font-semibold text-white shadow-md sm:mt-5 sm:px-4 sm:text-sm">
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-orange-400 sm:h-4 sm:w-4" />
-              <span className="break-words">{launch.location}, {launch.city}</span>
+            {/* About / Description */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+              <h3 className="text-base font-black text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-100">
+                About BHIVE &amp; Prestige Lakeside
+              </h3>
+              <p className="text-sm leading-relaxed text-slate-600">
+                Prestige Lakeside brings you premium residential luxury designed to accommodate global citizens looking for the ultimate lifestyle in Bangalore. Placed strategically near major business parks, this signature development blends luxury 2, 3 &amp; 4 BHK spaces with ecological landscaping, a multi-tier premium clubhouse, and premium specs.
+              </p>
+              <p className="text-sm leading-relaxed text-slate-600">
+                Our design focuses on natural lighting, double-height private decks, cross-ventilated bedroom windows, and soundproof study walls to support hybrid and work-from-home specialists.
+              </p>
             </div>
-            <div className="mt-6 space-y-2.5 sm:mt-8 sm:space-y-3">
-              {LOCATION_PERKS.map(({ icon: Icon, label }) => (
-                <div key={label} className={lp.locationTile}>
-                  <div className={cn(lp.iconCircleNavy, "h-10 w-10 sm:h-11 sm:w-11")}>
-                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" strokeWidth={1.75} />
-                  </div>
-                  <p className="min-w-0 flex-1 text-xs font-bold leading-snug text-[#0f1729] sm:text-sm">{label}</p>
-                </div>
-              ))}
-            </div>
-            {launch.builder && (
-              <div className="mt-6 flex w-full max-w-full items-center gap-2 rounded-xl border border-[#1a2744]/15 bg-[#0f1729]/5 px-3 py-2.5 sm:mt-8 sm:px-4 sm:py-3">
-                <Building2 className="h-4 w-4 shrink-0 text-orange-600 sm:h-5 sm:w-5" strokeWidth={1.5} />
-                <p className="min-w-0 text-xs text-slate-600 sm:text-sm">
-                  Developed by <strong className="font-bold text-[#0f1729]">{launch.builder}</strong>
-                </p>
+
+            {/* Floor Plans & Pricing Section */}
+            <div id="floor-plans" className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <div className="flex items-center justify-between gap-4 mb-4 pb-2 border-b border-slate-100">
+                <h3 className="text-base font-black text-slate-900 uppercase tracking-wider">
+                  Floor Plans &amp; Cost Options
+                </h3>
+                <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                  Plans Verified
+                </span>
               </div>
-            )}
+
+              {/* Floor tabs */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {FLOOR_PLANS.map((plan, i) => (
+                  <button
+                    key={plan.bhk}
+                    type="button"
+                    onClick={() => setSelectedPlan(i)}
+                    className={cn(
+                      "px-4 py-2 text-xs font-black rounded-lg border transition-all",
+                      selectedPlan === i 
+                        ? "bg-slate-900 border-slate-900 text-white shadow" 
+                        : "border-slate-200 bg-slate-50 text-slate-600 hover:text-slate-900 hover:border-slate-300"
+                    )}
+                  >
+                    {plan.bhk}
+                  </button>
+                ))}
+              </div>
+
+              {/* Showcase Detail Grid */}
+              <div className="grid gap-6 md:grid-cols-5 items-stretch">
+                <div className="md:col-span-3 space-y-4 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-extrabold text-slate-900">{FLOOR_PLANS[selectedPlan].bhk} Premium Layout Details</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      {FLOOR_PLANS[selectedPlan].details}
+                    </p>
+                    {/* Key stats */}
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                      <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Super Area</span>
+                        <p className="text-xs font-black text-slate-800 mt-0.5">{FLOOR_PLANS[selectedPlan].size}</p>
+                      </div>
+                      <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Carpet Area</span>
+                        <p className="text-xs font-black text-slate-800 mt-0.5">{FLOOR_PLANS[selectedPlan].carpet}</p>
+                      </div>
+                      <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Balcony Deck</span>
+                        <p className="text-xs font-black text-slate-800 mt-0.5">{FLOOR_PLANS[selectedPlan].deck}</p>
+                      </div>
+                      <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Price Range</span>
+                        <p className="text-xs font-black text-orange-655 mt-0.5">{FLOOR_PLANS[selectedPlan].price}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <a 
+                    href="#register-form" 
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-orange-500 hover:text-orange-600 mt-2"
+                  >
+                    Request Brochure PDF <ChevronRight className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+
+                {/* Simulated Blueprint Graphic */}
+                <div className="md:col-span-2 relative aspect-[4/3] md:aspect-auto rounded-xl bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center p-4">
+                  {/* Grid overlay */}
+                  <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:15px_15px]" />
+                  <div className="relative text-center">
+                    <Compass className="h-10 w-10 text-orange-500/25 mx-auto mb-2" />
+                    <p className="text-[10px] font-bold text-slate-450 uppercase tracking-widest">Layout Schematic</p>
+                    <a href="#register-form" className="text-[9px] font-black text-orange-500 uppercase tracking-wider block mt-1 hover:underline">
+                      Download Plan Document
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pricing list table */}
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-base font-black text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-100">
+                Detailed Pricing Table
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-450 font-bold uppercase tracking-wider">
+                      <th className="px-4 py-3">BHK Type</th>
+                      <th className="px-4 py-3">Super Area</th>
+                      <th className="px-4 py-3">Price</th>
+                      <th className="px-4 py-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {FLOOR_PLANS.map((plan) => (
+                      <tr key={plan.bhk} className="hover:bg-slate-50/50">
+                        <td className="px-4 py-3.5 font-bold text-slate-800">{plan.bhk}</td>
+                        <td className="px-4 py-3.5 text-slate-500">{plan.size}</td>
+                        <td className="px-4 py-3.5 font-black text-orange-600">{plan.price.split(" ")[0]}*</td>
+                        <td className="px-4 py-3.5 text-right">
+                          <a href="#register-form" className="text-xs font-bold text-orange-500 hover:underline">
+                            Request Cost Sheet
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Amenities Grid List */}
+            <div id="amenities" className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-base font-black text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-100">
+                Premium Township Amenities
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {AMENITIES.map(({ icon: Icon, label, desc }) => (
+                  <div key={label} className="flex gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-500 border border-slate-200/60 shadow-sm">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-800 leading-tight">{label}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5 leading-snug">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Connectivity Advantage */}
+            <div id="location" className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-base font-black text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-100">
+                Connectivity &amp; Location Advantages
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {LOCATION_HUBS.map((hub) => (
+                  <div key={hub.category} className="bg-slate-50 p-4 rounded-xl border border-slate-150">
+                    <div className="flex items-center gap-2 mb-2 pb-1 border-b border-slate-200/60 text-slate-800 font-extrabold text-xs uppercase tracking-wider">
+                      <hub.icon className="h-4 w-4 text-orange-500" />
+                      <span>{hub.category}</span>
+                    </div>
+                    <div className="space-y-2">
+                      {hub.items.map((item) => (
+                        <div key={item.name} className="flex justify-between text-xs text-slate-500">
+                          <span>{item.name}</span>
+                          <span className="font-bold text-slate-800">{item.time}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
-          <div className="relative min-h-[240px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a2744]/5 to-orange-50 shadow-[0_16px_48px_rgba(15,23,41,0.1)] ring-1 ring-orange-200/50 sm:min-h-[320px]">
-            {launch.image && (
-              <img src={launch.image} alt="" className="h-full min-h-[320px] w-full object-cover opacity-30" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-orange-50/40 to-[#1a2744]/10" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-              <div className="relative h-full w-full max-w-sm">
-                <svg viewBox="0 0 400 280" className="h-full w-full text-orange-300/60" fill="none">
-                  <path d="M40 140 Q120 80 200 120 T360 100" stroke="currentColor" strokeWidth="2" strokeDasharray="6 4" />
-                  <path d="M60 200 H340" stroke="currentColor" strokeWidth="3" />
-                  <circle cx="200" cy="130" r="28" className="fill-orange-500/15 stroke-orange-500/50" strokeWidth="2" />
-                </svg>
-                <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 text-center">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-theme-orange text-white shadow-theme-orange">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <p className="mt-2 rounded-lg bg-white px-4 py-2 text-xs font-bold text-[#0f1729] shadow-lg ring-1 ring-orange-200">
-                    {launch.name}
+          {/* RIGHT SIDEBAR (STICKY TOUR BOOKING FORM) */}
+          <div className="sticky top-24 z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              id="register-form"
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-100"
+            >
+              {done ? (
+                <div className="text-center py-8">
+                  <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500" />
+                  <h3 className="mt-4 text-base font-bold text-slate-900">Tour Booking Confirmed!</h3>
+                  <p className="mt-2 text-xs text-slate-500 leading-relaxed font-medium">
+                    Our coordinator will callback within <strong>2 hours</strong> with private site visit invitation slots and layout maps.
                   </p>
                 </div>
-              </div>
-              <p className="mt-4 rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200">
-                {launch.location}, {launch.city}
-              </p>
+              ) : (
+                <>
+                  <div className="border-b border-slate-100 pb-3 mb-4">
+                    <span className="rounded bg-orange-655 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-white shadow-sm shadow-orange-500/15">
+                      VIP ACCESS
+                    </span>
+                    <h3 className="mt-2 text-base font-black text-slate-900">Schedule a Site Tour</h3>
+                    <p className="text-[11px] text-slate-550 mt-0.5 leading-none">Choose timing slots &amp; get brochure copies</p>
+                  </div>
+
+                  <form onSubmit={handleFormSubmit} className="space-y-3.5">
+                    {/* Name input */}
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <input
+                        required
+                        placeholder="Full Name *"
+                        value={form.fullName}
+                        onChange={(e) => setForm((f) => ({ ...f, fullName: e.target.value }))}
+                        className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 pl-9.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 outline-none transition-all"
+                      />
+                    </div>
+
+                    {/* Mobile input */}
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <input
+                        required
+                        type="tel"
+                        placeholder="Mobile Number *"
+                        value={form.mobile}
+                        onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value }))}
+                        className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 pl-9.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 outline-none transition-all"
+                      />
+                    </div>
+
+                    {/* Email input */}
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="email"
+                        placeholder="Email Address"
+                        value={form.email}
+                        onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                        className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 pl-9.5 text-xs font-semibold text-slate-800 placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 outline-none transition-all"
+                      />
+                    </div>
+
+                    {/* BHK Dropdown */}
+                    <select
+                      value={form.bhk}
+                      onChange={(e) => setForm((f) => ({ ...f, bhk: e.target.value }))}
+                      className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-xs font-semibold text-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 outline-none transition-all"
+                    >
+                      <option value="">Select BHK Layout</option>
+                      {bhkOptions.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+
+                    {/* Budget Dropdown */}
+                    <select
+                      value={form.budget}
+                      onChange={(e) => setForm((f) => ({ ...f, budget: e.target.value }))}
+                      className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-xs font-semibold text-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 outline-none transition-all"
+                    >
+                      <option value="">Select Budget Range</option>
+                      {BUDGET_OPTIONS.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+
+                    {error && <p className="text-xs font-bold text-red-500">{error}</p>}
+
+                    {/* Submit CTA button */}
+                    <button 
+                      type="submit" 
+                      disabled={loading}
+                      className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 text-xs font-black text-white shadow-lg shadow-orange-500/20 hover:opacity-95 transition-all"
+                    >
+                      {loading ? "Booking Tour..." : (
+                        <>
+                          Book Free Site Tour <ArrowRight className="h-4 w-4 shrink-0" />
+                        </>
+                      )}
+                    </button>
+
+                    {/* Form promises */}
+                    <div className="mt-3.5 space-y-2 border-t border-slate-100 pt-3">
+                      {[
+                        "Zero Brokerage Policy",
+                        "Free Cab Service for Site Visit",
+                        "100% Secure & Private Details"
+                      ].map((item) => (
+                        <div key={item} className="flex items-center gap-2 text-[10px] text-slate-555 font-bold leading-none">
+                          <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                            <Check className="h-2.5 w-2.5" />
+                          </div>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Footer Disclaimer & RERA */}
+      <section className="bg-[#0c2340] border-t border-slate-900 py-10 text-slate-450">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 items-center justify-between border-b border-slate-800 pb-8 md:flex-row">
+            
+            {/* Branding & Logo */}
+            <div className="text-center md:text-left">
+              <h3 className="text-base font-black text-white uppercase tracking-widest">Triyards Realty</h3>
+              <p className="text-xs mt-1">India&apos;s Premium Real Estate Platform</p>
             </div>
+
+            {/* Zero Brokerage Statement */}
+            <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-2 text-emerald-400 text-xs shadow-sm">
+              <BadgeCheck className="h-4 w-4 shrink-0" />
+              <span><strong>Zero Brokerage Policy</strong>. Certified channel partner platform.</span>
+            </div>
+
+            {/* RERA Certificate Tag in Green */}
+            <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-2 text-emerald-400 text-xs shadow-sm">
+              <ShieldCheck className="h-4 w-4 shrink-0" />
+              <span><strong>RERA Regd. No</strong>: {reraNumber}</span>
+            </div>
+
+          </div>
+
+          <div className="mt-8 text-center text-[10px] sm:text-xs leading-relaxed max-w-4xl mx-auto space-y-4 text-slate-400">
+            <p>
+              Disclaimer: All information, images, blueprints, and metrics presented on this page are tentative marketing resources provided in good faith. The final specifications, pricing structures, layouts, and handovers will be governed exclusively by the registered builder Agreements and official RERA disclosures.
+            </p>
+            <p>
+              &copy; {new Date().getFullYear()} Triyards Realty. Developed in partnership with registered A-grade developers. All rights reserved.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Limited Period Offer bar (reference — compact, no form) */}
-      <section className={lp.offerBar}>
-        <div className="mx-auto flex max-w-7xl flex-col items-stretch gap-4 px-4 py-5 sm:flex-row sm:items-center sm:gap-5 sm:px-6 lg:px-8">
-          <div className="flex shrink-0 items-center gap-3 text-white">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-500/20 ring-1 ring-orange-400/30 sm:h-12 sm:w-12">
-              <Gift className="h-5 w-5 text-orange-400 sm:h-6 sm:w-6" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-base font-bold sm:text-lg">Limited Period Offer!</p>
-              <p className="mt-0.5 text-xs font-semibold leading-snug text-orange-300 sm:text-sm">{offerText}</p>
-            </div>
-          </div>
-
-          <div className="grid flex-1 grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
-            {OFFER_PERKS.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/10">
-                <Icon className="h-4 w-4 shrink-0 text-orange-400" strokeWidth={1.5} />
-                <span className="text-[11px] font-semibold leading-tight text-white/90 sm:text-xs">{label}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex w-full shrink-0 flex-col items-stretch sm:w-auto sm:items-end">
-            <a
-              href="#footer-register"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-bold text-[#0f1729] shadow-md transition-colors hover:bg-orange-50 sm:w-auto"
-            >
-              Enquire Now <ArrowRight className="h-4 w-4" />
-            </a>
-            <p className="mt-1.5 text-center text-[10px] text-white/50 sm:text-right">Limited units available!</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer lead form */}
-      <section id="footer-register" className="border-t border-slate-100 bg-[#f5f7fa] py-10 sm:py-14">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-6 sm:gap-8 lg:grid-cols-[200px_1fr]">
-            <div className="hidden items-end justify-center lg:flex">
-              <div className="relative opacity-30">
-                <Building2 className="h-40 w-40 text-[#1a2744]" strokeWidth={0.75} />
-                <Building2 className="absolute -right-8 bottom-0 h-28 w-28 text-[#1a2744]" strokeWidth={0.75} />
-              </div>
-            </div>
-            <div className="min-w-0">
-              <h2 className="text-lg font-extrabold text-[#0f1729] sm:text-2xl">
-                Your Dream Home is Just One Step Away!
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Register now to unlock exclusive pre-launch pricing &amp; floor plans.
-              </p>
-              <div className="mt-6">
-                <LaunchInquiryForm
-                  launch={launch}
-                  variant="footer"
-                  utmSource="launch-lp-footer"
-                  utmCampaign={launch.slug}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust bar (reference — light gray strip) */}
-      <section className={cn(lp.trustBar, "pb-4 sm:pb-0")}>
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-5 sm:gap-6 sm:px-6 sm:py-8 lg:px-8">
-          {TRUST_STATS.map(({ icon: Icon, value, label }) => (
-            <div key={label} className="flex flex-col items-center text-center px-1">
-              <div className={lp.iconCircleSm}>
-                <Icon className="h-4 w-4" strokeWidth={1.5} />
-              </div>
-              <p className="mt-1.5 text-base font-extrabold text-[#0f1729] sm:mt-2 sm:text-xl">{value}</p>
-              <p className="text-[9px] font-medium leading-tight text-slate-500 sm:text-[11px]">{label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Sticky Bottom Calling bar for mobile screens */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex gap-2 border-t border-slate-100 bg-white/95 p-3 shadow-2xl backdrop-blur-md pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:hidden">
+        <a href={phoneHref} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-700">
+          <Phone className="h-4 w-4 text-orange-500" /> Call Specialist
+        </a>
+        <a href="#register-form" className="flex flex-[2] items-center justify-center rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/20">
+          Enquire Now
+        </a>
+      </div>
 
       <LaunchLeadPopup launch={launch} />
       <LaunchFloatingCta />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex gap-2 border-t bg-white/95 p-3 shadow-lg backdrop-blur-sm pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:hidden">
-        <a href={phoneHref} className="flex flex-1 items-center justify-center gap-2 rounded-xl border py-3 text-sm font-bold">
-          <Phone className="h-4 w-4" /> Call
-        </a>
-        <a href="#register" className="flex flex-[2] items-center justify-center rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white">
-          Enquire Now
-        </a>
-      </div>
     </div>
   );
 }
-

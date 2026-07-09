@@ -44,7 +44,6 @@ export function Footer() {
             <h4 className="website-badge-text mb-4 text-violet-400/80">Properties</h4>
             <ul className="space-y-2.5 text-sm text-white/55">
               <li><Link href="/properties" className="transition-colors hover:text-violet-300">Buy</Link></li>
-              <li><Link href="/properties" className="transition-colors hover:text-violet-300">Rent</Link></li>
               <li><Link href="/projects" className="transition-colors hover:text-violet-300">New Projects</Link></li>
               <li><Link href="/properties" className="transition-colors hover:text-violet-300">Commercial</Link></li>
             </ul>

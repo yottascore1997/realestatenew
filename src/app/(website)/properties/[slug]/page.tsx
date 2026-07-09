@@ -51,7 +51,7 @@ function serializeProperty(p: PropertyRow) {
       ? {
           name: p.agent.name,
           designation: p.agent.designation || "Property Consultant",
-          phone: p.agent.phone || "+91 98765 43210",
+          phone: p.agent.phone || "+91 78873 77880",
           email: p.agent.email,
           avatar: p.agent.avatar,
         }

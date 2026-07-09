@@ -9,23 +9,23 @@ const ICON_MAP: Record<string, LucideIcon> = { Building2, HardHat, MapPin, Users
 
 const CARD_THEMES = [
   {
-    gradient: "from-[#0a2240] via-[#102C57] to-[#163d6e]",
-    iconBg: "bg-[#d4af7a] text-[#0c2340]",
+    gradient: "from-orange-600 via-orange-500 to-amber-500",
+    iconBg: "bg-white/20 text-white backdrop-blur-sm",
     wave: "from-white/10",
   },
   {
-    gradient: "from-[#102C57] via-[#1a3a6b] to-[#0f2847]",
-    iconBg: "bg-white text-[#102C57]",
+    gradient: "from-violet-700 via-violet-600 to-indigo-600",
+    iconBg: "bg-white/20 text-white backdrop-blur-sm",
     wave: "from-white/8",
   },
   {
-    gradient: "from-[#0c2340] via-[#123a5c] to-[#102C57]",
-    iconBg: "bg-[#faf6ef] text-[#b8922f]",
-    wave: "from-[#d4af7a]/8",
+    gradient: "from-slate-900 via-slate-800 to-slate-700",
+    iconBg: "bg-white/20 text-white backdrop-blur-sm",
+    wave: "from-white/10",
   },
   {
-    gradient: "from-[#8b6f2e] via-[#b8922f] to-[#c9a962]",
-    iconBg: "bg-white text-[#8b6f2e]",
+    gradient: "from-emerald-600 via-emerald-500 to-teal-500",
+    iconBg: "bg-white/20 text-white backdrop-blur-sm",
     wave: "from-white/15",
   },
 ];
@@ -46,10 +46,10 @@ export function AchievementStatsSection() {
   return (
     <section className="py-8 sm:py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-[#e8dcc8]/60 p-5 shadow-[0_20px_60px_rgba(12,35,64,0.07)] sm:p-7 lg:p-9">
+        <div className="relative overflow-hidden rounded-3xl border border-slate-100 p-5 shadow-[0_20px_60px_rgba(12,35,64,0.07)] sm:p-7 lg:p-9">
           {/* Background image — no overlay layer */}
           <img
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=500&fit=crop&q=80"
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=500&fit=crop&q=80"
             alt=""
             className="pointer-events-none absolute inset-0 h-full w-full object-cover object-right"
           />
@@ -144,7 +144,7 @@ export function AchievementStatsSection() {
                         className="relative z-10 mx-0 hidden w-3 shrink-0 items-center justify-center sm:flex lg:w-4"
                         aria-hidden
                       >
-                        <div className="h-2.5 w-2.5 rotate-45 border border-[#e8dcc8] bg-white shadow-sm" />
+                        <div className="h-2.5 w-2.5 rotate-45 border border-slate-200 bg-white shadow-sm" />
                       </div>
                     )}
                   </div>
