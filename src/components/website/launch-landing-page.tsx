@@ -3,11 +3,9 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
-  MapPin, Phone, Download, Play, Building2, Trees, ShieldCheck,
-  Dumbbell, Waves, Baby, Footprints, Zap, TreePine, Award, Clock, BadgeCheck,
-  Gift, Landmark, TrainFront, Sparkles, Layers, ArrowRight,
-  Car, ShoppingBag, GraduationCap, Plane, Wallet, CalendarCheck, Users, TrendingUp, Info, FileText, CheckCircle2, ChevronRight, User, Mail, Send,
-  Star, ShieldAlert, Heart, Share2, Compass, Check
+  MapPin, Phone, Building2, ShieldCheck, Dumbbell, Waves, Baby, Footprints,
+  Zap, TreePine, BadgeCheck, Landmark, ArrowRight, Car, ShoppingBag,
+  GraduationCap, CheckCircle2, ChevronRight, User, Mail, Star, Compass, Check
 } from "lucide-react";
 import { LaunchLeadPopup } from "@/components/website/launch-lead-popup";
 import { LaunchFloatingCta } from "@/components/website/launch-floating-cta";
@@ -17,7 +15,7 @@ import type { LaunchLandingData } from "@/lib/website/launch-types";
 
 type LaunchLandingPageProps = {
   launch: LaunchLandingData;
-  stats?: any;
+  stats?: unknown;
 };
 
 const AMENITIES = [
@@ -111,12 +109,6 @@ const LOCATION_HUBS = [
   }
 ];
 
-const PAYMENT_MILESTONES = [
-  { title: "Booking Amount", pct: "10%", desc: "Payable at the time of booking to secure your unit." },
-  { title: "Excavation Stage", pct: "15%", desc: "Upon commencement of foundation & excavation work." },
-  { title: "Structure Milestones", pct: "50%", desc: "Linked slab-wise construction installments over 24 months." },
-  { title: "On Handover", pct: "25%", desc: "Due on registry, final finish inspection, and key handover." }
-];
 
 function formatPrice(from?: number | null, to?: number | null) {
   const fmt = (n: number) => {

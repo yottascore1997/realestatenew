@@ -37,14 +37,6 @@ function formatLaunchPrice(from?: number | null, to?: number | null) {
   return `${formatCompactPrice(from)} onwards`;
 }
 
-function builderInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
 
 function slugFromName(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");

@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Search, MapPin, Building2, Play, Rocket, X,
-  ShieldCheck, Award, BadgeCheck, Landmark, Home, Key, Store, Wallet,
+  ShieldCheck, Award, BadgeCheck, Landmark, Home, Store, Wallet,
 } from "lucide-react";
-import { WebsiteHeader } from "@/components/website/website-header";
 import { IconSelect } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { HeroSearchData } from "@/lib/website/get-hero-data";
