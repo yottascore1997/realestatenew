@@ -1,6 +1,7 @@
 export const CRM_NAV = [
   { label: "Dashboard", href: "/crm", icon: "LayoutDashboard" },
   { label: "Lead Management", href: "/crm/leads", icon: "Users" },
+  { label: "WhatsApp", href: "/crm/whatsapp", icon: "MessageCircle" },
   { label: "Revenue Management", href: "/crm/finance", icon: "IndianRupee" },
   { label: "Properties", href: "/crm/properties", icon: "Building2" },
   { label: "Projects", href: "/crm/projects", icon: "FolderKanban" },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LaunchLandingPage } from "@/components/website/launch-landing-page";
-import { getLaunchBySlug, getAllLaunchSlugs } from "@/lib/website/get-launch-by-slug";
+import { getLaunchBySlug, getAllLaunchSlugs, getSimilarLaunches } from "@/lib/website/get-launch-by-slug";
 import { getHeroSearchData } from "@/lib/website/get-hero-data";
 
 export const dynamic = "force-dynamic";
@@ -35,11 +35,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function LaunchLandingRoute({ params }: PageProps) {
-  const [launch, heroData] = await Promise.all([
-    getLaunchBySlug(params.slug),
-    getHeroSearchData(),
-  ]);
+  const launch = await getLaunchBySlug(params.slug);
   if (!launch) notFound();
+
+  const [heroData, similarLaunches] = await Promise.all([
+    getHeroSearchData(),
+    getSimilarLaunches(launch.city, launch.slug),
+  ]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -54,7 +56,7 @@ export default async function LaunchLandingRoute({ params }: PageProps) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <LaunchLandingPage launch={launch} stats={heroData.stats} />
+      <LaunchLandingPage launch={launch} stats={heroData.stats} similarLaunches={similarLaunches} />
     </>
   );
 }

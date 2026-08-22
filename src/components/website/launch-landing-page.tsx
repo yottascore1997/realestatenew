@@ -16,6 +16,7 @@ import type { LaunchLandingData } from "@/lib/website/launch-types";
 type LaunchLandingPageProps = {
   launch: LaunchLandingData;
   stats?: unknown;
+  similarLaunches?: LaunchLandingData[];
 };
 
 const AMENITIES = [
@@ -109,7 +110,6 @@ const LOCATION_HUBS = [
   }
 ];
 
-
 function formatPrice(from?: number | null, to?: number | null) {
   const fmt = (n: number) => {
     if (n >= 10000000) return `₹${(n / 10000000).toFixed(n % 10000000 === 0 ? 0 : 1)} Cr`;
@@ -120,7 +120,7 @@ function formatPrice(from?: number | null, to?: number | null) {
   return `${fmt(from)} onwards`;
 }
 
-export function LaunchLandingPage({ launch }: LaunchLandingPageProps) {
+export function LaunchLandingPage({ launch, similarLaunches = [] }: LaunchLandingPageProps) {
   const [selectedPlan, setSelectedPlan] = useState(0);
   const [form, setForm] = useState({
     fullName: "",
@@ -634,8 +634,97 @@ export function LaunchLandingPage({ launch }: LaunchLandingPageProps) {
         </div>
       </section>
 
+      {/* 4. Similar Properties / Launches in the Same Area Section */}
+      {similarLaunches.length > 0 && (
+        <section className="bg-slate-100 border-t border-b border-slate-200 py-16 sm:py-20 z-10 relative">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+              <div>
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-orange-600 bg-orange-550/10 px-3 py-1 rounded border border-orange-500/20">
+                  Recommendations
+                </span>
+                <h2 className="mt-3 text-2xl font-black text-slate-900 sm:text-3xl leading-tight">
+                  Similar Properties in {launch.city}
+                </h2>
+                <p className="text-sm text-slate-500 mt-1.5">
+                  Explore other high-end residential new launches and premium townships nearby.
+                </p>
+              </div>
+              
+              <a 
+                href="/launches" 
+                className="inline-flex items-center gap-1.5 text-xs font-black text-slate-900 bg-white border border-slate-200 shadow-sm rounded-xl px-4.5 py-2.5 hover:bg-slate-50 transition-colors w-fit"
+              >
+                View All New Launches <ChevronRight className="h-4 w-4" />
+              </a>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {similarLaunches.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="group rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                    {item.image ? (
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-slate-200 flex items-center justify-center">
+                        <Building2 className="h-8 w-8 text-slate-400" />
+                      </div>
+                    )}
+                    
+                    {/* Status / Builder Overlay */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                      <span className="rounded bg-slate-900/90 text-white text-[9px] font-black uppercase tracking-widest px-2.5 py-1 backdrop-blur-md">
+                        {item.builder ?? "PREMIUM"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-base font-black text-slate-900 leading-tight group-hover:text-orange-500 transition-colors">
+                        {item.name}
+                      </h3>
+                      
+                      <div className="flex items-center gap-1 mt-1.5 text-xs text-slate-500">
+                        <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                        <span>{item.location}, {item.city}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none">Starting from</p>
+                        <p className="text-sm font-black text-orange-600 mt-1 leading-none">
+                          {formatPrice(item.priceFrom, item.priceTo).split(" ")[0]}*
+                        </p>
+                      </div>
+                      
+                      <a 
+                        href={`/launches/${item.slug}`} 
+                        className="inline-flex items-center gap-1 rounded-xl bg-slate-900 text-[11px] font-black text-white px-3.5 py-2 shadow group-hover:bg-orange-500 transition-colors"
+                      >
+                        Explore Project <ArrowRight className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+      )}
+
       {/* Footer Disclaimer & RERA */}
-      <section className="bg-[#0c2340] border-t border-slate-900 py-10 text-slate-450">
+      <section className="bg-[#0c2340] border-t border-slate-900 py-10 text-slate-455">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6 items-center justify-between border-b border-slate-800 pb-8 md:flex-row">
             

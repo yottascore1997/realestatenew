@@ -260,6 +260,45 @@ async function main() {
     await seedFinance(skylineProject.id, agent.id, admin.id);
   }
 
+  const waSettings = await prisma.whatsAppSettings.findFirst();
+  if (!waSettings) {
+    await prisma.whatsAppSettings.create({ data: { creditsTotal: 20000 } });
+  }
+
+  const templateCount = await prisma.whatsAppTemplate.count();
+  if (templateCount === 0) {
+    await prisma.whatsAppTemplate.createMany({
+      data: [
+        {
+          name: "New Project Launch",
+          metaName: "new_project_launch",
+          category: "MARKETING",
+          body: `Hi {{name}}, 👋\n\nWe are excited to launch {{project}} in {{location}}.\n\n🏡 2 & 3 BHK Luxury Apartments\n📍 Prime location\n💰 Special launch offer\n\nReply YES for site visit.\n\n— Team Triyards`,
+          footer: "Reply STOP to opt out",
+          variables: ["name", "project", "location"],
+          status: "APPROVED",
+        },
+        {
+          name: "Weekend Open House",
+          metaName: "weekend_open_house",
+          category: "MARKETING",
+          body: `Hi {{name}},\n\nJoin us this weekend for an exclusive site visit at {{project}}, {{city}}.\n\n🗓 Saturday & Sunday, 10 AM – 6 PM\n🎁 Special booking benefits for visitors\n\nConfirm your visit — reply YES.`,
+          footer: "Reply STOP to opt out",
+          variables: ["name", "project", "city"],
+          status: "APPROVED",
+        },
+        {
+          name: "Luxury Flats Offer - Pune",
+          metaName: "luxury_flats_pune",
+          category: "MARKETING",
+          body: `Hi {{name}},\n\nLimited period offer on premium flats in {{location}}!\n\n✨ Ready-to-move options\n✨ Flexible payment plans\n\nCall us or reply INTERESTED for details.`,
+          variables: ["name", "location"],
+          status: "DRAFT",
+        },
+      ],
+    });
+  }
+
   const counts = await Promise.all([
     prisma.project.count(),
     prisma.property.count(),

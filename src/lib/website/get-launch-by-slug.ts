@@ -89,3 +89,37 @@ export async function getAllLaunchSlugs(): Promise<string[]> {
     return Object.keys(PLACEHOLDER_BY_SLUG);
   }
 }
+
+export async function getSimilarLaunches(city: string, currentSlug: string, limit = 3): Promise<LaunchLandingData[]> {
+  try {
+    const dbLaunches = await prisma.launch.findMany({
+      where: {
+        city: { contains: city },
+        slug: { not: currentSlug }
+      },
+      take: limit,
+      include: { project: { include: { builder: true } } },
+    });
+    if (dbLaunches.length > 0) {
+      return dbLaunches.map((l) => {
+        const mapped = mapDbLaunch(l);
+        mapped.builder = l.builder ?? l.project?.builder?.name ?? mapped.builder;
+        mapped.projectName = l.project?.name ?? null;
+        return mapped;
+      });
+    }
+  } catch {
+    // fall through to placeholders
+  }
+
+  const placeholders = Object.values(PLACEHOLDER_BY_SLUG).filter(
+    (p) => p.city.toLowerCase().includes(city.toLowerCase()) && p.slug !== currentSlug
+  );
+  if (placeholders.length > 0) {
+    return placeholders.slice(0, limit);
+  }
+  return Object.values(PLACEHOLDER_BY_SLUG)
+    .filter((p) => p.slug !== currentSlug)
+    .slice(0, limit);
+}
+

@@ -113,6 +113,40 @@ enum DocumentType {
   OTHER
 }
 
+enum WhatsAppProvider {
+  NONE
+  META
+  INTERAKT
+  WATI
+  GUPSHUP
+  MSG91
+}
+
+enum WhatsAppCampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum WhatsAppMessageStatus {
+  PENDING
+  QUEUED
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum WhatsAppTemplateStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum NotificationType {
   FOLLOW_UP_REMINDER
   NEW_LEAD_ASSIGNED
@@ -217,7 +251,8 @@ model User {
   commissions      Commission[]
   expensesApproved Expense[]      @relation("ExpenseApprover")
   refundsApproved  Refund[]       @relation("RefundApprover")
-  salaries         Salary[]
+  salaries            Salary[]
+  whatsappCampaigns   WhatsAppCampaign[]
 }
 
 model Builder {
@@ -373,8 +408,9 @@ model Lead {
   callNotes    CallNote[]
   siteVisits   SiteVisit[]
   activities   LeadActivity[]
-  documents    LeadDocument[]
-  bookings     Booking[]
+  documents         LeadDocument[]
+  bookings          Booking[]
+  whatsappMessages  WhatsAppMessage[]
 
   @@index([mobile])
   @@index([email])
@@ -893,4 +929,84 @@ model Testimonial {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model WhatsAppSettings {
+  id                  String           @id @default(cuid())
+  provider            WhatsAppProvider @default(NONE)
+  apiToken            String?          @db.Text
+  phoneNumberId       String?
+  businessAccountId   String?
+  webhookVerifyToken  String?
+  creditsTotal        Int              @default(20000)
+  creditsUsed         Int              @default(0)
+  isConnected         Boolean          @default(false)
+  updatedAt           DateTime         @updatedAt
+}
+
+model WhatsAppTemplate {
+  id         String                 @id @default(cuid())
+  name       String
+  metaName   String?
+  category   String                 @default("MARKETING")
+  language   String                 @default("en")
+  header     String?
+  body       String                 @db.Text
+  footer     String?
+  variables  Json?
+  status     WhatsAppTemplateStatus @default(DRAFT)
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+
+  campaigns WhatsAppCampaign[]
+}
+
+model WhatsAppCampaign {
+  id               String                 @id @default(cuid())
+  name             String
+  templateId       String?
+  messageBody      String                 @db.Text
+  status           WhatsAppCampaignStatus @default(DRAFT)
+  scheduledAt      DateTime?
+  startedAt        DateTime?
+  completedAt      DateTime?
+  recipientFilter  Json?
+  totalRecipients  Int                    @default(0)
+  sentCount        Int                    @default(0)
+  deliveredCount   Int                    @default(0)
+  readCount        Int                    @default(0)
+  failedCount      Int                    @default(0)
+  createdById      String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  template  WhatsAppTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  createdBy User?             @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  messages  WhatsAppMessage[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model WhatsAppMessage {
+  id                String                @id @default(cuid())
+  campaignId        String
+  leadId            String?
+  phone             String
+  recipientName     String?
+  body              String                @db.Text
+  status            WhatsAppMessageStatus @default(PENDING)
+  providerMessageId String?
+  errorMessage      String?
+  sentAt            DateTime?
+  deliveredAt       DateTime?
+  readAt            DateTime?
+  createdAt         DateTime              @default(now())
+
+  campaign WhatsAppCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  lead     Lead?            @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([campaignId])
+  @@index([leadId])
+  @@index([status])
 }
